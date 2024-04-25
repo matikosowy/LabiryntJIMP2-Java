@@ -1,52 +1,105 @@
-import java.io.IOException;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
-public class Main {
+public class Main extends JFrame{
+    private JButton selectFileButton;
+    private JButton generateMazeButton;
+    private JPanel panelMain;
+    private char[][] maze;
+    private JPanel panel;
+    private JLabel dimensions;
+
+    public Main() {
+        setTitle("Maze Solver");
+        setContentPane(panel);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        selectFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                int result = fileChooser.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String filePath = selectedFile.getAbsolutePath();
+                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+
+                    int rows = 0;
+                    int columns = 0;
+
+
+                    if(filePath.endsWith(".bin")) {
+                        try {
+                            Input.binaryToText(filePath);
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku binarnego");
+                        }
+                        try {
+                            columns = Input.liczKolumny("maze_translated.txt");
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                        }
+
+                        try {
+                            rows = Input.liczWiersze("maze_translated.txt");
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                        }
+                        try {
+                            maze = Input.readMaze("maze_translated.txt", rows, columns);
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                            maze = new char[rows][columns];
+                        }
+
+
+
+                    }else {
+                        try {
+                            columns = Input.liczKolumny(filePath);
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                        }
+
+                        try {
+                            rows = Input.liczWiersze(filePath);
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                        }
+                        try {
+                            maze = Input.readMaze(filePath, rows, columns);
+                        } catch (Exception ex) {
+                            System.out.println("Nie udało się odczytać pliku");
+                            maze = new char[rows][columns];
+                        }
+
+                    }
+                    dimensions.setText("WYMIARY: W - " + rows + ", K - " + columns);
+                }
+            }
+        });
+        generateMazeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (maze != null) {
+                    GUI gui = new GUI(maze);
+                    panelMain.removeAll();
+                    panelMain.setLayout(new BorderLayout());
+                    panelMain.add(gui, BorderLayout.CENTER);
+                    panelMain.revalidate();
+                    panelMain.repaint();
+                }
+            }
+        });
+    }
 
     public static void main(String[] args) {
-        String filePath = "src/maze.txt";
-        int rows = 0;
-        int columns = 0;
-        try {
-            columns = Input.liczKolumny(filePath);
-            System.out.println("Liczba kolumn: " + columns);
-        } catch (Exception e) {
-            System.out.println("Nie udało się odczytać pliku");
-        }
-
-        try {
-            rows = Input.liczWiersze(filePath);
-            System.out.println("Liczba wierszy: " + rows);
-        } catch (Exception e) {
-            System.out.println("Nie udało się odczytać pliku");
-        }
-
-        String binaryFilePath = "src/maze.bin";
-
-        try {
-            Input.binaryToText(binaryFilePath);
-        } catch (IOException e) {
-            System.out.println("Failed to convert binary file to text");
-        }
-
-        char[][] maze;
-
-        try {
-            maze = Input.readMaze(filePath, rows, columns);
-        } catch (Exception e) {
-            System.out.println("Nie udało się odczytać pliku");
-            maze = new char[rows][columns]; // Assign a default value in case of an exception
-        }
-
-        final char[][] finalMaze = maze;
-
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Maze Display");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(new GUI(finalMaze)); // Use the effectively final variable here
-            frame.pack();
-            frame.setLocationRelativeTo(null); // Wyśrodkowanie okna
-            frame.setVisible(true);
-        });
+        Main MainWindow = new Main();
     }
 }
