@@ -39,7 +39,7 @@ public class Solver {
                 if (tentativeCost < neighbor.getCost()) {
                     neighbor.setCameFrom(current);
                     neighbor.setCost(tentativeCost);
-                    neighbor.setEstimatedCost(tentativeCost + heuristicCostEstimate(neighbor, end));
+                    neighbor.setEstimatedCost(tentativeCost);
 
                     if (!openSet.contains(neighbor)) {
                         openSet.add(neighbor);
@@ -80,9 +80,7 @@ public class Solver {
             int newX = node.getX() + direction[0];
             int newY = node.getY() + direction[1];
 
-            // Check if the new position is within the maze bounds and is not a wall
             if (newX >= 0 && newX < maze.length && newY >= 0 && newY < maze[0].length && maze[newX][newY] != 'X') {
-                // Check if the cell between the current node and the new position is ' '
                 int betweenX = node.getX() + direction[0] / 2;
                 int betweenY = node.getY() + direction[1] / 2;
                 if (maze[betweenX][betweenY] == ' ') {
@@ -90,12 +88,6 @@ public class Solver {
                 }
             }
         }
-
         return neighbors;
-    }
-
-    private double heuristicCostEstimate(Node start, Node goal) {
-        // implement this method based on your heuristic. A common one is Euclidean distance:
-        return Math.sqrt(Math.pow(start.getX() - goal.getX(), 2) + Math.pow(start.getY() - goal.getY(), 2));
     }
 }

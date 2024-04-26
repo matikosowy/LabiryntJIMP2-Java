@@ -7,11 +7,12 @@ import java.io.File;
 public class Main extends JFrame{
     private JButton selectFileButton;
     private JButton generateMazeButton;
-    private JPanel panelMain;
+    private JPanel panelMaze;
     private char[][] maze;
     private JPanel panel;
     private JLabel dimensions;
     private JButton solveButton;
+    private JLabel fileName;
 
     public Main() {
         setTitle("Maze Solver");
@@ -24,16 +25,14 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     String filePath = selectedFile.getAbsolutePath();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
 
                     int rows = 0;
                     int columns = 0;
-
 
                     if(filePath.endsWith(".bin")) {
                         try {
@@ -59,8 +58,6 @@ public class Main extends JFrame{
                             maze = new char[rows][columns];
                         }
 
-
-
                     }else {
                         try {
                             columns = Input.liczKolumny(filePath);
@@ -82,32 +79,51 @@ public class Main extends JFrame{
 
                     }
                     dimensions.setText("WYMIARY: W - " + rows + ", K - " + columns);
+                    fileName.setText("PLIK: " + selectedFile.getAbsolutePath());
                 }
             }
         });
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (maze != null) {
-                    GUI gui = new GUI(maze);
-                    panelMain.removeAll();
-                    panelMain.setLayout(new BorderLayout());
-                    panelMain.add(gui, BorderLayout.CENTER);
-                    panelMain.revalidate();
-                    panelMain.repaint();
+                if (maze != null){
+                    if(Errors.invalidMaze(maze, maze.length, maze[0].length) != 0) {
+                        GUI gui = new GUI(null);
+                        panelMaze.removeAll();
+                        panelMaze.revalidate();
+                        panelMaze.repaint();
+                        JOptionPane.showMessageDialog(Main.this, "Plik uszkodzony! Jedna z linii ma inny wymiar!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }else if(Errors.entryexitError(maze, maze.length, maze[0].length) != 0) {
+                        GUI gui = new GUI(null);
+                        panelMaze.removeAll();
+                        panelMaze.revalidate();
+                        panelMaze.repaint();
+                        JOptionPane.showMessageDialog(Main.this, "Za dużo punktów startowych lub końcowych!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    }else if(Errors.unrecognisedCharacter(maze, maze.length, maze[0].length) != ' '){
+                        GUI gui = new GUI(null);
+                        panelMaze.removeAll();
+                        panelMaze.revalidate();
+                        panelMaze.repaint();
+                        char znak = Errors.unrecognisedCharacter(maze, maze.length, maze[0].length);
+                        JOptionPane.showMessageDialog(Main.this, "Plik uszkodzony! Znaleziono nieznany znak: " + znak, "Error", JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        GUI gui = new GUI(maze);
+                        panelMaze.removeAll();
+                        panelMaze.setLayout(new BorderLayout());
+                        panelMaze.add(gui, BorderLayout.CENTER);
+                        panelMaze.revalidate();
+                        panelMaze.repaint();
 
-                    // Calculate the preferred size based on the maze size
-                    int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
-                    int preferredWidth = cellSize * maze[0].length;
-                    int preferredHeight = cellSize * maze.length;
+                        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+                        int preferredWidth = cellSize * maze[0].length;
+                        int preferredHeight = cellSize * maze.length;
 
-                    // Set the preferred size of the GUI panel
-                    gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-
-                    // Pack the frame to fit the preferred size of its contents
-                    pack();
+                        gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+                        pack();
+                    }
                 }
-            }
+
         });
         solveButton.addActionListener(new ActionListener() {
             @Override
@@ -124,7 +140,7 @@ public class Main extends JFrame{
                             }
                         }
                     }
-                    if (start != null && end != null) {
+                    if (start != null && end != null && Errors.entryexitError(maze, maze.length, maze[0].length) == 0) {
                         Solver solver = new Solver(maze, start, end);
                         java.util.List<Node> path = solver.solve();
                         if (path != null) {
@@ -132,16 +148,16 @@ public class Main extends JFrame{
                                 maze[node.getX()][node.getY()] = '.';
                             }
                             GUI gui = new GUI(maze);
-                            panelMain.removeAll();
-                            panelMain.setLayout(new BorderLayout());
-                            panelMain.add(gui, BorderLayout.CENTER);
-                            panelMain.revalidate();
-                            panelMain.repaint();
+                            panelMaze.removeAll();
+                            panelMaze.setLayout(new BorderLayout());
+                            panelMaze.add(gui, BorderLayout.CENTER);
+                            panelMaze.revalidate();
+                            panelMaze.repaint();
                         } else {
-                            JOptionPane.showMessageDialog(Main.this, "No path found!", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(Main.this, "Nie znaleziono ścieżki!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(Main.this, "Start or end point not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(Main.this, "Nieprawidlowa liczba początków lub końców!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

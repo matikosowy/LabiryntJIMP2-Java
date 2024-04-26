@@ -4,13 +4,11 @@ import java.awt.event.*;
 
 public class GUI extends JPanel {
     private char[][] maze;
-    private double zoom = 1.0;
 
     public GUI(char[][] maze) {
         this.maze = maze;
-        setPreferredSize(new Dimension(200, 200)); // Set the preferred panel size
+        setPreferredSize(new Dimension(200, 200));
 
-        // Add mouse listener
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -18,7 +16,6 @@ public class GUI extends JPanel {
                 int row = e.getY() / cellSize;
                 int col = e.getX() / cellSize;
 
-                // Check if the clicked cell is on the border and not a corner
                 if ((row == 0 || row == maze.length - 1 || col == 0 || col == maze[0].length - 1)
                         && !(row == 0 && col == 0)
                         && !(row == 0 && col == maze[0].length - 1)
@@ -29,12 +26,11 @@ public class GUI extends JPanel {
                     for (int i = 0; i < maze.length; i++) {
                         for (int j = 0; j < maze[i].length; j++) {
                             if (maze[i][j] == '.') {
-                                maze[i][j] = ' '; // Reset the path
+                                maze[i][j] = ' ';
                             }
                         }
                     }
 
-                    // Before setting a new 'P' or 'K', replace any existing 'P' or 'K' with 'X'
                     if(maze[row][col]!= 'P' && maze[row][col]!= 'K') {
                         for (int i = 0; i < maze.length; i++) {
                             for (int j = 0; j < maze[i].length; j++) {
@@ -47,22 +43,19 @@ public class GUI extends JPanel {
                         }
                     }
 
-                    // Change the cell to 'P' or 'K' based on the currently selected key
-                    // Only if the cell is not already 'P' or 'K'
                     if (maze[row][col] != 'P' && maze[row][col] != 'K') {
                         if (e.isShiftDown()) {
-                            maze[row][col] = 'K'; // Set 'K' for Shift+click
+                            maze[row][col] = 'K';
                         } else {
-                            maze[row][col] = 'P'; // Set 'P' for normal click
+                            maze[row][col] = 'P';
                         }
                     }
-                    repaint(); // Repaint the panel to reflect the changes
+                    repaint();
                 }
             }
         });
 
     }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -70,7 +63,6 @@ public class GUI extends JPanel {
         if (maze == null) {
             return;
         }
-
         int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
 
         for (int i = 0; i < maze.length; i++) {
@@ -106,7 +98,6 @@ public class GUI extends JPanel {
                     }
                 }
                 g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
-
             }
         }
     }
