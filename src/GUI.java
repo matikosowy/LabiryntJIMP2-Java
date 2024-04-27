@@ -4,19 +4,43 @@ import java.awt.event.*;
 
 public class GUI extends JPanel {
     private char[][] maze;
+    private double zoom = 1.0;
+    private Point offset = new Point();
+    private Point lastPoint;
 
-    // Wyświetlanie labiryntu graficznie
     public GUI(char[][] maze) {
         this.maze = maze;
         setPreferredSize(new Dimension(200, 200));
 
+        // Zoomowanie labiryntu
+        addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                double oldZoom = zoom;
+                if (e.getWheelRotation() < 0) {
+                    zoom *= 1.1;
+                } else if (e.getWheelRotation() > 0) {
+                    zoom /= 1.1;
+                }
+
+                offset.x += e.getX() * (1/oldZoom - 1/zoom);
+                offset.y += e.getY() * (1/oldZoom - 1/zoom);
+                repaint();
+            }
+        });
+
         addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                lastPoint = e.getPoint();
+            }
+
             @Override
             // Ustawianie punktów startowego i końcowego
             public void mouseClicked(MouseEvent e) {
-                int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
-                int row = e.getY() / cellSize;
-                int col = e.getX() / cellSize;
+                int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length) * zoom);
+                int row = (int) ((e.getY() - offset.y) / cellSize);
+                int col = (int) ((e.getX() - offset.x) / cellSize);
 
                 // Musi być na krawędzi labiryntu, nie może być w rogu, musi być w koordynatach nieparzystych
                 if ((row == 0 || row == maze.length - 1 || col == 0 || col == maze[0].length - 1)
@@ -61,7 +85,19 @@ public class GUI extends JPanel {
             }
         });
 
+        // Przesuwanie labiryntu
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point point = e.getPoint();
+                offset.x += point.x - lastPoint.x;
+                offset.y += point.y - lastPoint.y;
+                lastPoint = point;
+                repaint();
+            }
+        });
     }
+
     @Override
     // Rysowanie labiryntu
     protected void paintComponent(Graphics g) {
@@ -70,9 +106,8 @@ public class GUI extends JPanel {
         if (maze == null) {
             return;
         }
-        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length)*zoom) ;
 
-        // Interpretacja znaków na kolory
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {
                 if (maze[i][j] == 'X') {
@@ -87,7 +122,6 @@ public class GUI extends JPanel {
                     g.setColor(Color.YELLOW);
                 }
 
-                // Zamalowanie punktów, niebędących komórkami labiryntu jako część ścieżki
                 int count = 0;
                 if(maze[i][j] != 'X') {
                     if (i > 0 && maze[i - 1][j] == '.') {
@@ -106,7 +140,7 @@ public class GUI extends JPanel {
                         g.setColor(Color.YELLOW);
                     }
                 }
-                g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                g.fillRect((int)(j * cellSize + offset.x), (int)(i * cellSize + offset.y), cellSize, cellSize);
             }
         }
     }
