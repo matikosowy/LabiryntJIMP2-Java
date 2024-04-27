@@ -4,6 +4,7 @@ public class Output {
     public static boolean isDigit(char x) {
         return x >= '0' && x <= '9';
     }
+
     public static void outputFromBinary(String inputFileName) {
         try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
              BufferedReader pathReader = new BufferedReader(new FileReader("path.txt"));
@@ -68,7 +69,7 @@ public class Output {
             }
 
             out.writeInt(id);
-           // out.writeInt(kroki);
+            // out.writeInt(kroki);
 
             // Writing path
             int prev = 't';
@@ -112,9 +113,13 @@ public class Output {
     }
 
     public static void outputFromText(String inputFileName) {
-        try (BufferedReader in = new BufferedReader(new FileReader(inputFileName));
-             DataOutputStream out = new DataOutputStream(new FileOutputStream("wynik.bin"));
-             BufferedReader pathReader = new BufferedReader(new FileReader("src/path.txt"))) {
+        BufferedReader in = null;
+        DataOutputStream out = null;
+        BufferedReader pathReader = null;
+        try {
+            in = new BufferedReader(new FileReader(inputFileName));
+            out = new DataOutputStream(new FileOutputStream("wynik.bin"));
+            pathReader = new BufferedReader(new FileReader("src/path.txt"));
 
             int id = 0x52524243;
             out.writeInt(Integer.reverseBytes(id));
@@ -143,10 +148,14 @@ public class Output {
                 }
             }
 
+            in.close();
+
             short entryX = x;
             short entryY = y;
             out.writeShort(Short.reverseBytes(entryX));
             out.writeShort(Short.reverseBytes(entryY));
+
+            in = new BufferedReader(new FileReader(inputFileName));
 
             while ((ch = in.read()) != -1) {
                 if (ch == 'K') {
@@ -177,6 +186,8 @@ public class Output {
             int prev = 't';
             int count = 1;
 
+            in.close();
+            in = new BufferedReader(new FileReader(inputFileName));
 
             while ((ch = in.read()) != -1) {
                 if(ch != '\n'){
@@ -196,13 +207,16 @@ public class Output {
             out.writeInt(Integer.reverseBytes(solutionOffset));
 
             int separator = 35;
-            out.writeByte(separator);
+            out.write(separator);
 
             int wall = 88;
-            out.writeByte(wall);
+            out.write(wall);
 
             int path = 32;
-            out.writeByte(path);
+            out.write(path);
+
+            in.close();
+            in = new BufferedReader(new FileReader(inputFileName));
 
             // Writing encoded words
             int prevCh = 't';
@@ -211,41 +225,44 @@ public class Output {
             int znak = 0;
 
             while ((ch = in.read()) != -1) {
-                if (ch == 'X') {
+                if(ch == 'X'){
                     znak = wall;
-                } else if (ch == ' ' || ch == 'P' || ch == 'K') {
+                }else if(ch == ' ' || ch == 'P' || ch == 'K'){
                     znak = path;
                 }
+                if(ch != '\n'){
+                    if(prev != znak && prevCh != '\n'){
+                        if(prev != znak && prevCh != '\n'){
+                            if(prev != 't'){
+                                if(count < 0) count = 0;
+                                out.write(separator);
+                                out.write(prev);
+                                out.write(count);
+                            }
+                            count = 0;
 
-                if (ch != '\n') {
-                    if (prev != znak && prevCh != '\n') {
-                        if (prev != 't') {
-                            if (count < 0) count = 0;
-                            out.write(separator);
-                            out.write(prev);
-                            out.write(count);
+                        }else {
+                            count++;
+                            if(count == 255) {
+                                out.write(separator);
+                                out.write(znak);
+                                out.write(count);
+                                count = -1;
+                            }
                         }
-                        count = 0;
                     } else {
-                        count++;
-                        if (count == 255) {
-                            out.write(separator);
-                            out.write(znak);
-                            out.write(count);
-                            count = -1;
+                        if (count < 0) {
+                            continue;
                         }
+                        out.write(separator);
+                        out.write(znak);
+                        out.write(count);
+
+                        count -= 1;
                     }
-                } else {
-                    if (count < 0) {
-                        continue;
-                    }
-                    out.write(separator);
-                    out.write(znak);
-                    out.write(count);
-                    count = -1;
+                    prev = znak;
+                    prevCh = ch;
                 }
-                prev = znak;
-                prevCh = ch;
             }
             out.write(separator);
             out.write(znak);
@@ -289,6 +306,28 @@ public class Output {
             out.write(liczba);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (pathReader != null) {
+                try {
+                    pathReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

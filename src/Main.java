@@ -93,7 +93,7 @@ public class Main extends JFrame{
                     }else{
                         JOptionPane.showMessageDialog(Main.this, "Nieprawidłowy format pliku! Tylko .txt lub .bin", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    dimensions.setText("WYMIARY: W - " + rows + ", K - " + columns);
+                    dimensions.setText("WYMIARY: " + rows/2 + " x " + columns/2);
                     fileName.setText("PLIK: " + selectedFile.getAbsolutePath());
 
                     if(columns == 0 || rows == 0) {
@@ -175,13 +175,14 @@ public class Main extends JFrame{
                     if(filePath.endsWith(".bin")) {
                         try {
                             // Zapis labiryntu do pliku binarnego
-                            Output.outputFromBinary("maze_decoded.txt");
+                            //Output.outputFromBinary("maze_decoded.txt");
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
                     }else if(filePath.endsWith(".txt")) {
                         try {
                             // Zapis labiryntu do pliku tekstowego
+                            System.out.println(filePath);
                             Output.outputFromText(filePath);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
