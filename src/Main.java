@@ -14,6 +14,7 @@ public class Main extends JFrame{
     private JButton solveButton;
     private JLabel fileName;
     private JPanel panelMaze;
+    private JButton helpButton;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
@@ -54,19 +55,19 @@ public class Main extends JFrame{
                             showErrorAndResetPanel("Nie udało się odczytać pliku binarnego!");
                         }
                         try {
-                            columns = Input.countColumns("maze_translated.txt");
+                            columns = Input.countColumns("maze_decoded.txt");
                         } catch (Exception ex) {
                             JOptionPane.showMessageDialog(Main.this, "Nie udało się policzyc kolumn!", "Error", JOptionPane.ERROR_MESSAGE);
                             showErrorAndResetPanel("Nie udało się policzyc kolumn!");
                         }
                         try {
-                            rows = Input.countRows("maze_translated.txt");
+                            rows = Input.countRows("maze_decoded.txt");
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się policzyc wierszy!");
                         }
                         try {
                             // Zapis labiryntu do wektora 2d
-                            maze = Input.readMaze("maze_translated.txt", rows, columns);
+                            maze = Input.readMaze("maze_decoded.txt", rows, columns);
                         } catch (Exception ex) {
                             maze = new char[rows][columns];
                             showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem po konwersji z binarnego!");
@@ -170,7 +171,33 @@ public class Main extends JFrame{
                     } else {
                         JOptionPane.showMessageDialog(Main.this, "Nieprawidlowa liczba początków lub końców!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    String filePath = fileName.getText().substring(6);
+                    if(filePath.endsWith(".bin")) {
+                        try {
+                            // Zapis labiryntu do pliku binarnego
+                            Output.outputFromBinary("maze_decoded.txt");
+                        } catch (Exception ex) {
+                            showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
+                        }
+                    }else if(filePath.endsWith(".txt")) {
+                        try {
+                            // Zapis labiryntu do pliku tekstowego
+                            Output.outputFromText(filePath);
+                        } catch (Exception ex) {
+                            showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
+                        }
+                    }
                 }
+            }
+        });
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(Main.this, "1. Wybierz plik z labiryntem przy użyciu przycisku Plik.\n" +
+                        "2. Naciśnij przycisk Generuj w celu wygenerowania labiryntu na ekranie.\n" +
+                        "3. Naciśnij przycisk Rozwiąż w celu znalezienia ścieżki.\n" +
+                        "4. Naciskaj LPM lub Shift+LPM na krawędź labiryntu, aby wybrać nowe wejście/wyjście.\n" +
+                        "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Main">
-  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="5" column-count="19" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="4" column-count="20" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="683" height="578"/>
@@ -10,7 +10,7 @@
     <children>
       <toolbar id="b0068">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="19" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="0" row-span="1" col-span="20" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="-1" height="20"/>
           </grid>
         </constraints>
@@ -29,6 +29,18 @@
               <text value="Generuj"/>
             </properties>
           </component>
+          <component id="37bdd" class="javax.swing.JButton" binding="solveButton">
+            <constraints/>
+            <properties>
+              <text value="Rozwiąż"/>
+            </properties>
+          </component>
+          <component id="9295d" class="javax.swing.JButton" binding="helpButton">
+            <constraints/>
+            <properties>
+              <text value="Pomoc"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <component id="b3574" class="javax.swing.JLabel" binding="dimensions">
@@ -37,14 +49,6 @@
         </constraints>
         <properties>
           <text value=""/>
-        </properties>
-      </component>
-      <component id="37bdd" class="javax.swing.JButton" binding="solveButton">
-        <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Rozwiąż"/>
         </properties>
       </component>
       <component id="e1390" class="javax.swing.JLabel" binding="fileName">
