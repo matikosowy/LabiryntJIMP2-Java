@@ -1,5 +1,6 @@
 public class Errors {
 
+    // Sprawdzenie ilości początków i końców
     public static int entryexitError(char[][] maze, int rows, int columns){
         int countP = 0;
         for(int i=0; i<rows; i++){
@@ -16,6 +17,7 @@ public class Errors {
         }
     }
 
+    // Sprawdzenie występowania nieznanych znaków w pliku labiryntu
     public static char unrecognisedCharacter(char[][] maze, int rows, int columns){
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
@@ -27,6 +29,7 @@ public class Errors {
         return ' ';
     }
 
+    // Sprawdzenie zgodności ilości znaków w wierszach
     public static int invalidMaze(char[][] maze, int rows, int columns){
         int length = maze[0].length;
         for(int i=0; i<rows; i++){

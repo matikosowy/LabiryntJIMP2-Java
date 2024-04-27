@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 
 public class Input {
-    public static int liczKolumny(String filePath) throws IOException {
+    public static int countColumns(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String Line = reader.readLine();
         reader.close();
@@ -19,7 +19,7 @@ public class Input {
         }
     }
 
-    public static int liczWiersze(String filePath) throws IOException {
+    public static int countRows(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         int lines = 0;
         while (reader.readLine() != null) lines++;
@@ -27,6 +27,7 @@ public class Input {
         return lines;
     }
 
+    // Konwersja labiryntu z pliku binarnego do tekstoego
     public static void binaryToText(String binaryFilePath) throws IOException {
         try (DataInputStream in = new DataInputStream(new FileInputStream(binaryFilePath));
              FileWriter out = new FileWriter("maze_translated.txt")) {
@@ -110,6 +111,8 @@ public class Input {
             }
         }
     }
+
+    // Wczytywanie labiryntu z pliku tekstowego do wektora 2d
     public static char[][] readMaze(String filePath, int rows, int columns) throws IOException {
         char[][] maze = new char[rows][columns];
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
