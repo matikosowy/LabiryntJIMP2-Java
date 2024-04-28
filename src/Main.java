@@ -16,8 +16,8 @@ public class Main extends JFrame{
     private JPanel panelMaze;
     private JButton helpButton;
     private JButton resetButton;
-    private JButton fitButton;
     private JButton errorButton;
+    private JButton exitButton;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
@@ -48,7 +48,11 @@ public class Main extends JFrame{
     public Main() {
         setTitle("Maze Solver");
         setIconImage(new ImageIcon("src/icon.png").getImage());
-        Taskbar.getTaskbar().setIconImage(new ImageIcon("src/icon.png").getImage());
+        try {
+            Taskbar.getTaskbar().setIconImage(new ImageIcon("src/icon.png").getImage());
+        }catch  (Exception e) {
+            System.out.println("Wykryto system: Windows");
+        }
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -241,9 +245,15 @@ public class Main extends JFrame{
         errorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                dispose();
                 setExtendedState(JFrame.MAXIMIZED_BOTH);
-                setUndecorated(true);
                 setVisible(true);
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
     }

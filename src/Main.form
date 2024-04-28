@@ -53,6 +53,12 @@
               <text value="Nie widzisz labiryntu?"/>
             </properties>
           </component>
+          <component id="30f69" class="javax.swing.JButton" binding="exitButton">
+            <constraints/>
+            <properties>
+              <text value="Wyjdź"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <component id="b3574" class="javax.swing.JLabel" binding="dimensions">
