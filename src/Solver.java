@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.*;
 
 
@@ -54,7 +55,6 @@ public class Solver {
                 }
             }
         }
-
         return null; // Brak ścieżki
     }
 
@@ -70,6 +70,7 @@ public class Solver {
             node = node.getCameFrom();
         }
         Collections.reverse(path);
+
         return path;
     }
 

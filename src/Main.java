@@ -6,6 +6,7 @@ import java.io.File;
 
 
 public class Main extends JFrame{
+
     private JButton selectFileButton;
     private JButton generateMazeButton;
     private char[][] maze;
@@ -18,30 +19,34 @@ public class Main extends JFrame{
     private JButton resetButton;
     private JButton errorButton;
     private JButton exitButton;
+    private JLabel zoomLabel;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-        GUI gui = new GUI(null);
+        GUI gui = new GUI(null, zoomLabel);
         panelMaze.removeAll();
         panelMaze.revalidate();
         panelMaze.repaint();
     }
-    public void updateMaze(char[][] maze) {
-        this.maze = maze;
-
-        GUI gui = new GUI(maze);
+    public void updateMaze() {
+        GUI gui = new GUI(maze, zoomLabel);
         panelMaze.removeAll();
         panelMaze.setLayout(new BorderLayout());
         panelMaze.add(gui, BorderLayout.CENTER);
         panelMaze.revalidate();
         panelMaze.repaint();
 
-        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+       // int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        int cellSize = 1;
+        System.out.println(cellSize);
         int preferredWidth = cellSize * maze[0].length;
         int preferredHeight = cellSize * maze.length;
 
         gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         pack();
+
+        this.revalidate();
+        this.repaint();
     }
 
 
@@ -142,7 +147,7 @@ public class Main extends JFrame{
                         char znak = Errors.unrecognisedCharacter(maze, maze.length, maze[0].length);
                         showErrorAndResetPanel("Plik uszkodzony! Znaleziono nieznany znak: " + znak);
                     } else {
-                        updateMaze(maze);
+                        updateMaze();
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -174,7 +179,7 @@ public class Main extends JFrame{
                             for (Node node : path) {
                                 maze[node.getX()][node.getY()] = '.';
                             }
-                            GUI gui = new GUI(maze);
+                            GUI gui = new GUI(maze, zoomLabel);
                             panelMaze.removeAll();
                             panelMaze.setLayout(new BorderLayout());
                             panelMaze.add(gui, BorderLayout.CENTER);
@@ -203,6 +208,7 @@ public class Main extends JFrame{
                         }
                     }
                 }
+
             }
         });
         helpButton.addActionListener(new ActionListener() {
@@ -233,7 +239,7 @@ public class Main extends JFrame{
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                     }
                 }
-                GUI gui = new GUI(maze);
+                GUI gui = new GUI(maze, zoomLabel);
                 panelMaze.removeAll();
                 panelMaze.setLayout(new BorderLayout());
                 panelMaze.add(gui, BorderLayout.CENTER);

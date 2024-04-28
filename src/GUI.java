@@ -7,21 +7,26 @@ public class GUI extends JPanel {
     private double zoom = 1.0;
     private Point offset = new Point();
     private Point lastPoint;
+    private JLabel zoomLabel;
 
-    public GUI(char[][] maze) {
+    public GUI(char[][] maze, JLabel zoomLabel) {
         this.maze = maze;
+        this.zoomLabel = zoomLabel;
+        setSize(200, 200);
+//
+//        setSize(200,200);
+//
+//        if (maze.length > 100 || maze[0].length > 100) {
+//            zoom = 2.0;
+//        }
+//        if (maze.length > 250 || maze[0].length > 250) {
+//            zoom = 3.0;
+//        }
+//        if (maze.length > 500 || maze[0].length > 500) {
+//            zoom = 4.0;
+//        }
 
-        if (maze.length > 100 || maze[0].length > 100) {
-            zoom = 2.0;
-        }
-        if (maze.length > 250 || maze[0].length > 250) {
-            zoom = 3.0;
-        }
-        if (maze.length > 500 || maze[0].length > 500) {
-            zoom = 4.0;
-        }
-
-
+        zoomLabel.setText("ZOOM: " + zoom);
         // Zoomowanie labiryntu
         addMouseWheelListener(new MouseAdapter() {
             @Override
@@ -32,6 +37,10 @@ public class GUI extends JPanel {
                 } else if (e.getWheelRotation() > 0) {
                     zoom /= 1.1;
                 }
+                if(zoom < 1.0) {
+                    zoom = 1.0;
+                }
+                zoomLabel.setText("ZOOM: " + zoom);
 
                 offset.x += e.getX() * (1/oldZoom - 1/zoom);
                 offset.y += e.getY() * (1/oldZoom - 1/zoom);
@@ -48,7 +57,8 @@ public class GUI extends JPanel {
             @Override
             // Ustawianie punktów startowego i końcowego
             public void mouseClicked(MouseEvent e) {
-                int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length) * zoom);
+                //int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length) * zoom);
+                int cellSize = (int)(1 * zoom);
                 int row = (int) ((e.getY() - offset.y) / cellSize);
                 int col = (int) ((e.getX() - offset.x) / cellSize);
 
@@ -116,7 +126,8 @@ public class GUI extends JPanel {
         if (maze == null) {
             return;
         }
-        int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length)*zoom) ;
+        //int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length)*zoom) ;
+        int cellSize = (int)(1 * zoom);
 
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {
