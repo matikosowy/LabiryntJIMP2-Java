@@ -17,7 +17,7 @@ public class Main extends JFrame{
     private JButton helpButton;
     private JButton resetButton;
     private JButton fitButton;
-    private JButton button1;
+    private JButton errorButton;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
@@ -41,7 +41,7 @@ public class Main extends JFrame{
         int preferredHeight = cellSize * maze.length;
 
         gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        //pack();
+        pack();
     }
 
 
@@ -238,6 +238,14 @@ public class Main extends JFrame{
             }
         });
 
+        errorButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+                setUndecorated(true);
+                setVisible(true);
+            }
+        });
     }
 
     public static void main(String[] args) {

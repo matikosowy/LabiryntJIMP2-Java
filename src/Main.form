@@ -44,7 +44,13 @@
           <component id="9295d" class="javax.swing.JButton" binding="helpButton">
             <constraints/>
             <properties>
-              <text value="Pomoc"/>
+              <text value="Instrukcja"/>
+            </properties>
+          </component>
+          <component id="442b5" class="javax.swing.JButton" binding="errorButton">
+            <constraints/>
+            <properties>
+              <text value="Nie widzisz labiryntu?"/>
             </properties>
           </component>
         </children>
