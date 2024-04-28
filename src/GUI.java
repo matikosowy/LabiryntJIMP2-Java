@@ -9,22 +9,27 @@ public class GUI extends JPanel {
     private Point lastPoint;
     private JLabel zoomLabel;
 
+    public void setZoom(double zoom, JLabel zoomLabel){
+        this.zoom = zoom;
+        zoomLabel.setText("ZOOM: " + zoom);
+    }
+
     public GUI(char[][] maze, JLabel zoomLabel) {
         this.maze = maze;
         this.zoomLabel = zoomLabel;
         setSize(200, 200);
-//
-//        setSize(200,200);
-//
-//        if (maze.length > 100 || maze[0].length > 100) {
-//            zoom = 2.0;
-//        }
-//        if (maze.length > 250 || maze[0].length > 250) {
-//            zoom = 3.0;
-//        }
-//        if (maze.length > 500 || maze[0].length > 500) {
-//            zoom = 4.0;
-//        }
+
+        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        if(cellSize<1){
+            cellSize = 1;
+            if(maze.length > maze[0].length) {
+                zoom = maze.length * 0.01;
+            }else{
+                zoom = maze[0].length * 0.01;
+            }
+        }
+
+
 
         zoomLabel.setText("ZOOM: " + zoom);
         // Zoomowanie labiryntu
@@ -57,8 +62,13 @@ public class GUI extends JPanel {
             @Override
             // Ustawianie punktów startowego i końcowego
             public void mouseClicked(MouseEvent e) {
-                //int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length) * zoom);
-                int cellSize = (int)(1 * zoom);
+
+                int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+                if(cellSize<1){
+                    cellSize = 1;
+                }
+                cellSize *= zoom;
+
                 int row = (int) ((e.getY() - offset.y) / cellSize);
                 int col = (int) ((e.getX() - offset.x) / cellSize);
 
@@ -126,8 +136,12 @@ public class GUI extends JPanel {
         if (maze == null) {
             return;
         }
-        //int cellSize = (int) (Math.min(getWidth() / maze[0].length, getHeight() / maze.length)*zoom) ;
-        int cellSize = (int)(1 * zoom);
+
+        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        if(cellSize<1){
+            cellSize = 1;
+        }
+        cellSize *= zoom;
 
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {

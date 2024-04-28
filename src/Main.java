@@ -5,8 +5,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 
-public class Main extends JFrame{
 
+public class Main extends JFrame{
     private JButton selectFileButton;
     private JButton generateMazeButton;
     private char[][] maze;
@@ -17,9 +17,11 @@ public class Main extends JFrame{
     private JPanel panelMaze;
     private JButton helpButton;
     private JButton resetButton;
-    private JButton errorButton;
     private JButton exitButton;
     private JLabel zoomLabel;
+    private JButton dopasujButton;
+    private JButton zoomButton;
+    private GUI gui;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
@@ -29,15 +31,18 @@ public class Main extends JFrame{
         panelMaze.repaint();
     }
     public void updateMaze() {
-        GUI gui = new GUI(maze, zoomLabel);
+        gui = new GUI(maze, zoomLabel);
         panelMaze.removeAll();
         panelMaze.setLayout(new BorderLayout());
         panelMaze.add(gui, BorderLayout.CENTER);
         panelMaze.revalidate();
         panelMaze.repaint();
 
-       // int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
-        int cellSize = 1;
+        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        if(cellSize<1){
+            cellSize = 1;
+        }
+
         System.out.println(cellSize);
         int preferredWidth = cellSize * maze[0].length;
         int preferredHeight = cellSize * maze.length;
@@ -218,7 +223,11 @@ public class Main extends JFrame{
                         "2. Naciśnij przycisk Generuj w celu wygenerowania labiryntu na ekranie.\n" +
                         "3. Naciśnij przycisk Rozwiąż w celu znalezienia ścieżki.\n" +
                         "4. Naciskaj LPM lub Shift+LPM na krawędź labiryntu, aby wybrać nowe wejście/wyjście.\n" +
-                        "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
+                        "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.\n" +
+                        "6. Przycisk Reset przywraca stare wejście/wyjście.\n" +
+                        "7. Przycisk Oddal ustawia zoom na 1.0.\n" +
+                        "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
+
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -248,18 +257,36 @@ public class Main extends JFrame{
             }
         });
 
-        errorButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                setExtendedState(JFrame.MAXIMIZED_BOTH);
-                setVisible(true);
-            }
-        });
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
+            }
+        });
+        dopasujButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (gui != null) {
+                    gui.setZoom(1.0, zoomLabel);
+                    gui.repaint();
+                }
+            }
+        });
+        zoomButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (gui != null) {
+                    double zoom;
+
+                    if(maze.length > maze[0].length) {
+                        zoom = maze.length * 0.01;
+                    }else {
+                        zoom = maze[0].length * 0.01;
+                    }
+
+                    gui.setZoom(zoom, zoomLabel);
+                    gui.repaint();
+                }
             }
         });
     }
