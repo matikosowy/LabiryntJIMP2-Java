@@ -174,15 +174,14 @@ public class Main extends JFrame{
                     String filePath = fileName.getText().substring(6);
                     if(filePath.endsWith(".bin")) {
                         try {
-                            // Zapis labiryntu do pliku binarnego
-                            //Output.outputFromBinary("maze_decoded.txt");
+                            // Zapis labiryntu z pliku binarnego
+                            Output.outputFromBinary("maze_decoded.txt", maze);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
                     }else if(filePath.endsWith(".txt")) {
                         try {
-                            // Zapis labiryntu do pliku tekstowego
-                            System.out.println(filePath);
+                            // Zapis labiryntu z pliku tekstowego
                             Output.outputFromText(filePath);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");

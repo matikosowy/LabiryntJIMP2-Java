@@ -5,58 +5,58 @@ public class Output {
         return x >= '0' && x <= '9';
     }
 
-    public static void outputFromBinary(String inputFileName) {
+    public static void outputFromBinary(String inputFileName, char[][] maze) {
         try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
-             BufferedReader pathReader = new BufferedReader(new FileReader("path.txt"));
+             BufferedReader pathReader = new BufferedReader(new FileReader("src/path.txt"));
              DataOutputStream out = new DataOutputStream(new FileOutputStream("wynik.bin"))) {
 
             int id = Integer.reverseBytes(in.readInt());
-            out.writeInt(id);
+            out.writeInt(Integer.reverseBytes(id));
 
             int escape = in.read();
             out.write(escape);
 
             short columns = Short.reverseBytes(in.readShort());
-            out.writeShort(columns);
+            out.writeShort(Short.reverseBytes(columns));
 
             short lines = Short.reverseBytes(in.readShort());
-            out.writeShort(lines);
+            out.writeShort(Short.reverseBytes(lines));
 
             short entryX = Short.reverseBytes(in.readShort());
-            out.writeShort(entryX);
+            out.writeShort(Short.reverseBytes(entryX));
 
             short entryY = Short.reverseBytes(in.readShort());
-            out.writeShort(entryY);
+            out.writeShort(Short.reverseBytes(entryY));
 
             short exitX = Short.reverseBytes(in.readShort());
-            out.writeShort(exitX);
+            out.writeShort(Short.reverseBytes(exitX));
 
             short exitY = Short.reverseBytes(in.readShort());
-            out.writeShort(exitY);
+            out.writeShort(Short.reverseBytes(exitY));
 
             int reservedOne = Integer.reverseBytes(in.readInt());
-            out.writeInt(reservedOne);
+            out.writeInt(Integer.reverseBytes(reservedOne));
 
             int reservedTwo = Integer.reverseBytes(in.readInt());
-            out.writeInt(reservedTwo);
+            out.writeInt(Integer.reverseBytes(reservedTwo));
 
             int reservedThree = Integer.reverseBytes(in.readInt());
-            out.writeInt(reservedThree);
+            out.writeInt(Integer.reverseBytes(reservedThree));
 
             int counter = Integer.reverseBytes(in.readInt());
-            out.writeInt(counter);
+            out.writeInt(Integer.reverseBytes(counter));
 
             int solutionOffset = 123;
-            out.writeInt(solutionOffset);
+            out.writeInt(Integer.reverseBytes(solutionOffset));
 
             int separator = in.read();
-            out.writeByte(separator);
+            out.write(separator);
 
             int wall = in.read();
-            out.writeByte(wall);
+            out.write(wall);
 
             int path = in.read();
-            out.writeByte(path);
+            out.write(path);
 
             // Writing labyrinth
             int temp;
@@ -68,14 +68,28 @@ public class Output {
                 licz++;
             }
 
-            out.writeInt(id);
-            // out.writeInt(kroki);
+            out.writeInt(Integer.reverseBytes(id));
+
+            int kroki = 0;
+
+            for (int i = 0; i < maze.length; i++) {
+                for (int j = 0; j < maze[i].length; j++) {
+                    if (maze[i][j] == '.') {
+                        kroki++;
+                    }
+                }
+            }
+            kroki -= 2;
+
+            out.writeInt(Integer.reverseBytes(kroki));
 
             // Writing path
             int prev = 't';
             int prevC = 0;
             int liczba = 0;
             int c;
+
+
             while ((c = pathReader.read()) != -1) {
                 if (c != '\n') {
                     if (isDigit((char) c)) {
@@ -112,6 +126,7 @@ public class Output {
         }
     }
 
+
     public static void outputFromText(String inputFileName) {
         BufferedReader in = null;
         DataOutputStream out = null;
@@ -128,10 +143,10 @@ public class Output {
             out.write(escape);
 
             int columns = Input.countColumns(inputFileName);
-            out.writeShort(Short.reverseBytes((short)columns));
+            out.writeShort(Short.reverseBytes((short) columns));
 
             int lines = Input.countRows(inputFileName);
-            out.writeShort(Short.reverseBytes((short)lines));
+            out.writeShort(Short.reverseBytes((short) lines));
 
             short x = 1;
             short y = 1;
@@ -171,8 +186,8 @@ public class Output {
 
             short exitX = x;
             short exitY = y;
-            out.writeShort(Short.reverseBytes((short)exitX));
-            out.writeShort(Short.reverseBytes((short)exitY));
+            out.writeShort(Short.reverseBytes((short) exitX));
+            out.writeShort(Short.reverseBytes((short) exitY));
 
             int reservedOne = 255;
             out.writeInt(Integer.reverseBytes(reservedOne));
@@ -190,12 +205,12 @@ public class Output {
             in = new BufferedReader(new FileReader(inputFileName));
 
             while ((ch = in.read()) != -1) {
-                if(ch != '\n'){
-                    if(prev != ch && prev != 't'){
+                if (ch != '\n') {
+                    if (prev != ch && prev != 't') {
                         count++;
                     }
                     prev = ch;
-                }else{
+                } else {
                     count++;
                 }
             }
@@ -219,60 +234,69 @@ public class Output {
             in = new BufferedReader(new FileReader(inputFileName));
 
             // Writing encoded words
-            int prevCh = 't';
-            count = 0;
             prev = 't';
+            int prev_ch = 't';
+            count = 0;
             int znak = 0;
 
-            while ((ch = in.read()) != -1) {
+            while((ch = in.read()) != -1){
+
                 if(ch == 'X'){
                     znak = wall;
                 }else if(ch == ' ' || ch == 'P' || ch == 'K'){
                     znak = path;
                 }
+
                 if(ch != '\n'){
-                    if(prev != znak && prevCh != '\n'){
-                        if(prev != znak && prevCh != '\n'){
-                            if(prev != 't'){
-                                if(count < 0) count = 0;
-                                out.write(separator);
-                                out.write(prev);
-                                out.write(count);
-                            }
-                            count = 0;
-
-                        }else {
-                            count++;
-                            if(count == 255) {
-                                out.write(separator);
-                                out.write(znak);
-                                out.write(count);
-                                count = -1;
-                            }
+                    if(prev != znak && prev_ch != '\n'){
+                        if(prev != 't'){
+                            if(count < 0 ) count = 0;
+                            out.write(separator);
+                            out.write(prev);
+                            out.write(count);
                         }
-                    } else {
-                        if (count < 0) {
-                            continue;
-                        }
-                        out.write(separator);
-                        out.write(znak);
-                        out.write(count);
+                        count = 0;
 
-                        count -= 1;
+                    }else{
+                        count++;
+                        if(count==255){
+                            out.write(separator);
+                            out.write(znak);
+                            out.write(count);
+                            count = -1;
+
+                        }
                     }
-                    prev = znak;
-                    prevCh = ch;
+                } else{
+                    if(count<0){
+                        continue;
+                    }
+
+                    out.write(separator);
+                    out.write(znak);
+                    out.write(count);
+
+                    count=-1;
                 }
+
+                prev = znak;
+                prev_ch = ch;
             }
             out.write(separator);
             out.write(znak);
             out.write(count);
+
+
+            out.writeInt(Integer.reverseBytes(id));
+            int kroki = 100;
+            out.writeInt(Integer.reverseBytes(kroki));
 
             // Writing path
             int c;
             prev = 't';
             int prevC = 0;
             int liczba = 0;
+
             while ((c = pathReader.read()) != -1) {
                 if (c != '\n') {
                     if (isDigit((char) c)) {
@@ -304,6 +328,7 @@ public class Output {
             }
             out.write(prevC);
             out.write(liczba);
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -331,3 +356,4 @@ public class Output {
         }
     }
 }
+
