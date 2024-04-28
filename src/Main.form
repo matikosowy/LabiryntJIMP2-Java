@@ -35,6 +35,12 @@
               <text value="Rozwiąż"/>
             </properties>
           </component>
+          <component id="8d5d2" class="javax.swing.JButton" binding="resetButton">
+            <constraints/>
+            <properties>
+              <text value="Reset"/>
+            </properties>
+          </component>
           <component id="9295d" class="javax.swing.JButton" binding="helpButton">
             <constraints/>
             <properties>

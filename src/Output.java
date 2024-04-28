@@ -58,7 +58,7 @@ public class Output {
             int path = in.read();
             out.write(path);
 
-            // Writing labyrinth
+            // Przepisywanie słów kodowych
             int temp;
             int cel = counter * 3;
             int licz = 0;
@@ -70,8 +70,8 @@ public class Output {
 
             out.writeInt(Integer.reverseBytes(id));
 
+            // Liczenie kroków ścieżki
             int kroki = 0;
-
             for (int i = 0; i < maze.length; i++) {
                 for (int j = 0; j < maze[i].length; j++) {
                     if (maze[i][j] == '.') {
@@ -83,7 +83,7 @@ public class Output {
 
             out.writeInt(Integer.reverseBytes(kroki));
 
-            // Writing path
+            // Zapisywanie ścieżki
             int prev = 't';
             int prevC = 0;
             int liczba = 0;
@@ -127,14 +127,10 @@ public class Output {
     }
 
 
-    public static void outputFromText(String inputFileName) {
-        BufferedReader in = null;
-        DataOutputStream out = null;
-        BufferedReader pathReader = null;
-        try {
-            in = new BufferedReader(new FileReader(inputFileName));
-            out = new DataOutputStream(new FileOutputStream("wynik.bin"));
-            pathReader = new BufferedReader(new FileReader("src/path.txt"));
+    public static void outputFromText(String inputFileName, char[][] maze) {
+        try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
+             BufferedReader pathReader = new BufferedReader(new FileReader("src/path.txt"));
+             DataOutputStream out = new DataOutputStream(new FileOutputStream("wynik.bin"))) {
 
             int id = 0x52524243;
             out.writeInt(Integer.reverseBytes(id));
@@ -148,46 +144,37 @@ public class Output {
             int lines = Input.countRows(inputFileName);
             out.writeShort(Short.reverseBytes((short) lines));
 
-            short x = 1;
-            short y = 1;
-            int ch;
-            while ((ch = in.read()) != -1) {
-                if (ch == 'P') {
-                    break;
-                }
-                if (ch == '\n') {
-                    y++;
-                    x = 1;
-                } else {
-                    x++;
+            // Znajdowanie wejścia
+            short entryX = 0;
+            short entryY = 0;
+
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'P'){
+                        entryX = (short)(j + 1);
+                        entryY = (short)(i +1 );
+                    }
                 }
             }
 
-            in.close();
-
-            short entryX = x;
-            short entryY = y;
             out.writeShort(Short.reverseBytes(entryX));
             out.writeShort(Short.reverseBytes(entryY));
 
-            in = new BufferedReader(new FileReader(inputFileName));
+            // Znajdowanie wyjścia
+            short exitX = 0;
+            short exitY = 0;
 
-            while ((ch = in.read()) != -1) {
-                if (ch == 'K') {
-                    break;
-                }
-                if (ch == '\n') {
-                    y++;
-                    x = 1;
-                } else {
-                    x++;
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'K'){
+                        exitX = (short)(j + 1);
+                        exitY = (short)(i +1 );
+                    }
                 }
             }
 
-            short exitX = x;
-            short exitY = y;
-            out.writeShort(Short.reverseBytes((short) exitX));
-            out.writeShort(Short.reverseBytes((short) exitY));
+            out.writeShort(Short.reverseBytes(exitX));
+            out.writeShort(Short.reverseBytes(exitY));
 
             int reservedOne = 255;
             out.writeInt(Integer.reverseBytes(reservedOne));
@@ -201,18 +188,15 @@ public class Output {
             int prev = 't';
             int count = 1;
 
-            in.close();
-            in = new BufferedReader(new FileReader(inputFileName));
-
-            while ((ch = in.read()) != -1) {
-                if (ch != '\n') {
-                    if (prev != ch && prev != 't') {
+            // Liczenie słów kodowych
+            for(int i = 0; i<lines; i++){
+                for(int j = 0; j<columns; j++){
+                    if(prev != maze[i][j] && prev != 't'){
                         count++;
                     }
-                    prev = ch;
-                } else {
-                    count++;
+                    prev = maze[i][j];
                 }
+                count++;
             }
 
             int counter = count;
@@ -230,25 +214,20 @@ public class Output {
             int path = 32;
             out.write(path);
 
-            in.close();
-            in = new BufferedReader(new FileReader(inputFileName));
-
-            // Writing encoded words
+            // Zapisywanie słów kodowych
             prev = 't';
-            int prev_ch = 't';
             count = 0;
             int znak = 0;
 
-            while((ch = in.read()) != -1){
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'X'){
+                        znak = wall;
+                    }else if(maze[i][j] == ' ' || maze[i][j] == 'P' || maze[i][j] == 'K' || maze[i][j] == '.'){
+                        znak = path;
+                    }
 
-                if(ch == 'X'){
-                    znak = wall;
-                }else if(ch == ' ' || ch == 'P' || ch == 'K'){
-                    znak = path;
-                }
-
-                if(ch != '\n'){
-                    if(prev != znak && prev_ch != '\n'){
+                    if(prev != znak && (i == 0 || j != 0)){
                         if(prev != 't'){
                             if(count < 0 ) count = 0;
                             out.write(separator);
@@ -256,7 +235,6 @@ public class Output {
                             out.write(count);
                         }
                         count = 0;
-
                     }else{
                         count++;
                         if(count==255){
@@ -264,34 +242,41 @@ public class Output {
                             out.write(znak);
                             out.write(count);
                             count = -1;
-
                         }
                     }
-                } else{
-                    if(count<0){
-                        continue;
-                    }
-
-                    out.write(separator);
-                    out.write(znak);
-                    out.write(count);
-
-                    count=-1;
+                    prev = znak;
+                }
+                if(count<0){
+                    continue;
                 }
 
-                prev = znak;
-                prev_ch = ch;
+                out.write(separator);
+                out.write(znak);
+                out.write(count);
+
+                count=-1;
             }
+
             out.write(separator);
             out.write(znak);
             out.write(count);
 
 
             out.writeInt(Integer.reverseBytes(id));
-            int kroki = 100;
+
+            // Liczenie kroków ścieżki
+            int kroki = 0;
+            for (int i = 0; i < lines; i++) {
+                for (int j = 0; j < columns; j++) {
+                    if (maze[i][j] == '.') {
+                        kroki++;
+                    }
+                }
+            }
+            kroki -= 2;
             out.writeInt(Integer.reverseBytes(kroki));
 
-            // Writing path
+            // Zapisywanie ścieżki
             int c;
             prev = 't';
             int prevC = 0;
@@ -331,28 +316,6 @@ public class Output {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (pathReader != null) {
-                try {
-                    pathReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }

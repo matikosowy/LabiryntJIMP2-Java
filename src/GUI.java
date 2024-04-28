@@ -10,7 +10,6 @@ public class GUI extends JPanel {
 
     public GUI(char[][] maze) {
         this.maze = maze;
-        setPreferredSize(new Dimension(200, 200));
 
         // Zoomowanie labiryntu
         addMouseWheelListener(new MouseAdapter() {

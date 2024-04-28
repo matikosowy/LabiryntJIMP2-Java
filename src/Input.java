@@ -110,6 +110,7 @@ public class Input {
 
             }
         }
+
     }
 
     // Wczytywanie labiryntu z pliku tekstowego do wektora 2d

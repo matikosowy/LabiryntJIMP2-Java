@@ -15,6 +15,9 @@ public class Main extends JFrame{
     private JLabel fileName;
     private JPanel panelMaze;
     private JButton helpButton;
+    private JButton resetButton;
+    private JButton fitButton;
+    private JButton button1;
 
     private void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
@@ -23,9 +26,29 @@ public class Main extends JFrame{
         panelMaze.revalidate();
         panelMaze.repaint();
     }
+    public void updateMaze(char[][] maze) {
+        this.maze = maze;
+
+        GUI gui = new GUI(maze);
+        panelMaze.removeAll();
+        panelMaze.setLayout(new BorderLayout());
+        panelMaze.add(gui, BorderLayout.CENTER);
+        panelMaze.revalidate();
+        panelMaze.repaint();
+
+        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
+        int preferredWidth = cellSize * maze[0].length;
+        int preferredHeight = cellSize * maze.length;
+
+        gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+        //pack();
+    }
+
 
     public Main() {
         setTitle("Maze Solver");
+        setIconImage(new ImageIcon("src/icon.png").getImage());
+        Taskbar.getTaskbar().setIconImage(new ImageIcon("src/icon.png").getImage());
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -115,19 +138,7 @@ public class Main extends JFrame{
                         char znak = Errors.unrecognisedCharacter(maze, maze.length, maze[0].length);
                         showErrorAndResetPanel("Plik uszkodzony! Znaleziono nieznany znak: " + znak);
                     } else {
-                        GUI gui = new GUI(maze);
-                        panelMaze.removeAll();
-                        panelMaze.setLayout(new BorderLayout());
-                        panelMaze.add(gui, BorderLayout.CENTER);
-                        panelMaze.revalidate();
-                        panelMaze.repaint();
-
-                        int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
-                        int preferredWidth = cellSize * maze[0].length;
-                        int preferredHeight = cellSize * maze.length;
-
-                        gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-                        pack();
+                        updateMaze(maze);
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -175,14 +186,14 @@ public class Main extends JFrame{
                     if(filePath.endsWith(".bin")) {
                         try {
                             // Zapis labiryntu z pliku binarnego
-                            Output.outputFromBinary("maze_decoded.txt", maze);
+                            Output.outputFromBinary(filePath, maze);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
                     }else if(filePath.endsWith(".txt")) {
                         try {
                             // Zapis labiryntu z pliku tekstowego
-                            Output.outputFromText(filePath);
+                            Output.outputFromText(filePath, maze);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
@@ -200,6 +211,33 @@ public class Main extends JFrame{
                         "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filePath = fileName.getText().substring(6);
+
+                if(filePath.endsWith(".bin")) {
+                    try {
+                        maze = Input.readMaze("maze_decoded.txt", maze.length, maze[0].length);
+                    } catch (Exception ex) {
+                        showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
+                    }
+                } else if(filePath.endsWith(".txt")){
+                    try {
+                        maze = Input.readMaze(filePath, maze.length, maze[0].length);
+                    } catch (Exception ex) {
+                        showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
+                    }
+                }
+                GUI gui = new GUI(maze);
+                panelMaze.removeAll();
+                panelMaze.setLayout(new BorderLayout());
+                panelMaze.add(gui, BorderLayout.CENTER);
+                panelMaze.revalidate();
+                panelMaze.repaint();
+            }
+        });
+
     }
 
     public static void main(String[] args) {
