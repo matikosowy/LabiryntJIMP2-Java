@@ -30,7 +30,7 @@ public class Input {
     // Konwersja labiryntu z pliku binarnego do tekstoego
     public static void binaryToText(String binaryFilePath) throws IOException {
         try (DataInputStream in = new DataInputStream(new FileInputStream(binaryFilePath));
-             FileWriter out = new FileWriter("maze_translated.txt")) {
+             FileWriter out = new FileWriter("maze_decoded.txt")) {
 
 
             int id = Integer.reverseBytes(in.readInt());
@@ -50,22 +50,22 @@ public class Input {
             int wall = in.read();
             int path = in.read();
 
-            System.out.println("id = " + id);
-            System.out.println("escape = " + escape);
-            System.out.println("columns = " + columns);
-            System.out.println("lines = " + lines);
-            System.out.println("entryX = " + entryX);
-            System.out.println("entryY = " + entryY);
-            System.out.println("exitX = " + exitX);
-            System.out.println("exitY = " + exitY);
-            System.out.println("reserved_one = " + reserved_one);
-            System.out.println("reserved_two = " + reserved_two);
-            System.out.println("reserved_three = " + reserved_three);
-            System.out.println("counter = " + counter);
-            System.out.println("solution_offset = " + solution_offset);
-            System.out.println("separator = " + separator);
-            System.out.println("wall = " + wall);
-            System.out.println("path = " + path);
+//            System.out.println("id = " + id);
+//            System.out.println("escape = " + escape);
+//            System.out.println("columns = " + columns);
+//            System.out.println("lines = " + lines);
+//            System.out.println("entryX = " + entryX);
+//            System.out.println("entryY = " + entryY);
+//            System.out.println("exitX = " + exitX);
+//            System.out.println("exitY = " + exitY);
+//            System.out.println("reserved_one = " + reserved_one);
+//            System.out.println("reserved_two = " + reserved_two);
+//            System.out.println("reserved_three = " + reserved_three);
+//            System.out.println("counter = " + counter);
+//            System.out.println("solution_offset = " + solution_offset);
+//            System.out.println("separator = " + separator);
+//            System.out.println("wall = " + wall);
+//            System.out.println("path = " + path);
 
             for(int i=0; i<lines; i++){
                 if(i!=0) out.write('\n');
@@ -110,6 +110,7 @@ public class Input {
 
             }
         }
+
     }
 
     // Wczytywanie labiryntu z pliku tekstowego do wektora 2d
