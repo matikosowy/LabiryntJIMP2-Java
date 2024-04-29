@@ -1,5 +1,6 @@
-import javax.swing.*;
+import java.io.DataOutputStream;
 import java.util.*;
+import java.io.FileOutputStream;
 
 
 // Algorytm A*
@@ -98,5 +99,18 @@ public class Solver {
             }
         }
         return neighbors;
+    }
+    // Zapis ścieżki do pliku
+    private void pathToFile(){
+        try{
+            DataOutputStream out = new DataOutputStream(new FileOutputStream("filesOut/path.txt"));
+        }catch (Exception e){
+            System.out.println("Błąd zapisu ścieżki do pliku");
+        }
+        for (int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[i].length; j++) {
+
+            }
+        }
     }
 }

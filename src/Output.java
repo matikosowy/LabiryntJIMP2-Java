@@ -10,42 +10,79 @@ public class Output {
              BufferedReader pathReader = new BufferedReader(new FileReader("filesOut/path.txt"));
              DataOutputStream out = new DataOutputStream(new FileOutputStream("filesOut/wynik.bin"))) {
 
-            int id = Integer.reverseBytes(in.readInt());
-            out.writeInt(Integer.reverseBytes(id));
+            int id = in.readInt();
+            out.writeInt(id);
 
             int escape = in.read();
             out.write(escape);
 
-            short columns = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(columns));
+            short columns = in.readShort();
+            out.writeShort(columns);
 
-            short lines = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(lines));
+            short lines = in.readShort();
+            out.writeShort(lines);
 
-            short entryX = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(entryX));
+            // Pomiń EntryX & EntryY
+            in.readShort();
+            in.readShort();
 
-            short entryY = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(entryY));
+            columns = Short.reverseBytes(columns);
+            lines = Short.reverseBytes(lines);
 
-            short exitX = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(exitX));
+            // EntryX & EntryY
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'P'){
+                        out.writeShort(Short.reverseBytes((short)(j + 1)));
+                        out.writeShort(Short.reverseBytes((short)(i + 1)));
+                    }
+                }
+            }
 
-            short exitY = Short.reverseBytes(in.readShort());
-            out.writeShort(Short.reverseBytes(exitY));
+            // Pomiń ExitX & ExitY
+            in.readShort();
+            in.readShort();
 
-            int reservedOne = Integer.reverseBytes(in.readInt());
-            out.writeInt(Integer.reverseBytes(reservedOne));
+            // ExitX & ExitY
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'K'){
+                        out.writeShort(Short.reverseBytes((short)(j + 1)));
+                        out.writeShort(Short.reverseBytes((short)(i + 1)));
+                    }
+                }
+            }
 
-            int reservedTwo = Integer.reverseBytes(in.readInt());
-            out.writeInt(Integer.reverseBytes(reservedTwo));
+            int reservedOne = in.readInt();
+            out.writeInt(reservedOne);
 
-            int reservedThree = Integer.reverseBytes(in.readInt());
-            out.writeInt(Integer.reverseBytes(reservedThree));
+            int reservedTwo = in.readInt();
+            out.writeInt(reservedTwo);
 
-            int counter = Integer.reverseBytes(in.readInt());
+            int reservedThree = in.readInt();
+            out.writeInt(reservedThree);
+
+            // Pomiń counter
+            in.readInt();
+
+            // Liczenie słów kodowych
+            int counter = 0;
+            int prev = 't';
+            for(int i = 0; i<maze.length; i++){
+                for(int j = 0; j<maze[0].length; j++){
+                    if(prev != maze[i][j] && prev != 't'){
+                        if((maze[i][j] == ' ' && prev == '.') || (maze[i][j] == '.' && prev == ' ')){
+                            counter--;
+                        }
+                        counter++;
+                    }
+                    prev = maze[i][j];
+                }
+                counter++;
+            }
             out.writeInt(Integer.reverseBytes(counter));
 
+            in.readInt(); // Pomiń solutionOffset
             int solutionOffset = 123;
             out.writeInt(Integer.reverseBytes(solutionOffset));
 
@@ -58,17 +95,54 @@ public class Output {
             int path = in.read();
             out.write(path);
 
-            // Przepisywanie słów kodowych
-            int temp;
-            int cel = counter * 3;
-            int licz = 0;
-            while (licz < cel) {
-                temp = in.read();
-                out.write(temp);
-                licz++;
+            // Zapisywanie słów kodowych
+            prev = 't';
+            int count = 0;
+            int znak = 0;
+
+            for(int i=0; i<lines; i++){
+                for(int j=0; j<columns; j++){
+                    if(maze[i][j] == 'X'){
+                        znak = wall;
+                    }else if(maze[i][j] == ' ' || maze[i][j] == 'P' || maze[i][j] == 'K' || maze[i][j] == '.'){
+                        znak = path;
+                    }
+
+                    if(prev != znak && (i == 0 || j != 0)){
+                        if(prev != 't'){
+                            if(count < 0 ) count = 0;
+                            out.write(separator);
+                            out.write(prev);
+                            out.write(count);
+                        }
+                        count = 0;
+                    }else{
+                        count++;
+                        if(count==255){
+                            out.write(separator);
+                            out.write(znak);
+                            out.write(count);
+                            count = -1;
+                        }
+                    }
+                    prev = znak;
+                }
+                if(count<0){
+                    continue;
+                }
+
+                out.write(separator);
+                out.write(znak);
+                out.write(count);
+
+                count=-1;
             }
 
-            out.writeInt(Integer.reverseBytes(id));
+            out.write(separator);
+            out.write(znak);
+            out.write(count);
+
+            out.writeInt(id);
 
             // Liczenie kroków ścieżki
             int kroki = 0;
@@ -84,7 +158,7 @@ public class Output {
             out.writeInt(Integer.reverseBytes(kroki));
 
             // Zapisywanie ścieżki
-            int prev = 't';
+            prev = 't';
             int prevC = 0;
             int liczba = 0;
             int c;
@@ -152,7 +226,7 @@ public class Output {
                 for(int j=0; j<columns; j++){
                     if(maze[i][j] == 'P'){
                         entryX = (short)(j + 1);
-                        entryY = (short)(i +1 );
+                        entryY = (short)(i + 1);
                     }
                 }
             }
@@ -168,7 +242,7 @@ public class Output {
                 for(int j=0; j<columns; j++){
                     if(maze[i][j] == 'K'){
                         exitX = (short)(j + 1);
-                        exitY = (short)(i +1 );
+                        exitY = (short)(i + 1);
                     }
                 }
             }
@@ -189,9 +263,12 @@ public class Output {
             int count = 1;
 
             // Liczenie słów kodowych
-            for(int i = 0; i<lines; i++){
-                for(int j = 0; j<columns; j++){
+            for(int i = 0; i<maze.length; i++){
+                for(int j = 0; j<maze[0].length; j++){
                     if(prev != maze[i][j] && prev != 't'){
+                        if((maze[i][j] == ' ' && prev == '.') || (maze[i][j] == '.' && prev == ' ')){
+                            count--;
+                        }
                         count++;
                     }
                     prev = maze[i][j];

@@ -11,7 +11,11 @@ public class GUI extends JPanel {
 
     public void setZoom(double zoom, JLabel zoomLabel){
         this.zoom = zoom;
-        zoomLabel.setText("ZOOM: " + zoom);
+
+        if(zoom < 1.0) {
+            this.zoom = 1.0;
+        }
+        zoomLabel.setText("ZOOM: " + this.zoom);
     }
 
     public GUI(char[][] maze, JLabel zoomLabel) {
