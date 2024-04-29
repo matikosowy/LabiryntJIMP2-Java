@@ -30,7 +30,7 @@ public class Input {
     // Konwersja labiryntu z pliku binarnego do tekstoego
     public static void binaryToText(String binaryFilePath) throws IOException {
         try (DataInputStream in = new DataInputStream(new FileInputStream(binaryFilePath));
-             FileWriter out = new FileWriter("maze_decoded.txt")) {
+             FileWriter out = new FileWriter("filesOut/maze_decoded.txt")) {
 
 
             int id = Integer.reverseBytes(in.readInt());

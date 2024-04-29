@@ -7,8 +7,8 @@ public class Output {
 
     public static void outputFromBinary(String inputFileName, char[][] maze) {
         try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
-             BufferedReader pathReader = new BufferedReader(new FileReader("src/path.txt"));
-             DataOutputStream out = new DataOutputStream(new FileOutputStream("wynik.bin"))) {
+             BufferedReader pathReader = new BufferedReader(new FileReader("filesOut/path.txt"));
+             DataOutputStream out = new DataOutputStream(new FileOutputStream("filesOut/wynik.bin"))) {
 
             int id = Integer.reverseBytes(in.readInt());
             out.writeInt(Integer.reverseBytes(id));
@@ -129,8 +129,8 @@ public class Output {
 
     public static void outputFromText(String inputFileName, char[][] maze) {
         try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
-             BufferedReader pathReader = new BufferedReader(new FileReader("src/path.txt"));
-             DataOutputStream out = new DataOutputStream(new FileOutputStream("wynik.bin"))) {
+             BufferedReader pathReader = new BufferedReader(new FileReader("filesOut/path.txt"));
+             DataOutputStream out = new DataOutputStream(new FileOutputStream("filesOut/wynik.bin"))) {
 
             int id = 0x52524243;
             out.writeInt(Integer.reverseBytes(id));
