@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-
-
 public class Main extends JFrame{
     private JButton selectFileButton;
     private JButton generateMazeButton;
@@ -52,7 +50,6 @@ public class Main extends JFrame{
         this.revalidate();
         this.repaint();
     }
-
 
     public Main() {
         setTitle("Maze Solver");
@@ -139,6 +136,7 @@ public class Main extends JFrame{
                 }
             }
         });
+
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,7 +153,6 @@ public class Main extends JFrame{
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
-
                 }
             }
         });
@@ -183,7 +180,6 @@ public class Main extends JFrame{
                             for (Node node : path) {
                                 maze[node.getX()][node.getY()] = '.';
                             }
-
                             if(zoomLabel.getText().equals("ZOOM: 1.0")){
                                 updateMaze();
                                 gui.setZoom(1.0, zoomLabel);
@@ -192,7 +188,6 @@ public class Main extends JFrame{
                                 updateMaze();
                                 gui.setZoom(Double.parseDouble(zoomLabel.getText().substring(6)), zoomLabel);
                             }
-
                         } else {
                             JOptionPane.showMessageDialog(Main.this, "Nie znaleziono ścieżki!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -216,7 +211,6 @@ public class Main extends JFrame{
                         }
                     }
                 }
-
             }
         });
         helpButton.addActionListener(new ActionListener() {
@@ -234,7 +228,6 @@ public class Main extends JFrame{
                         "- wynik.bin (aktualny labirynt zapisany binarnie wraz ze ścieżką)\n" +
                         "- path.txx (tekstowy zapis ścieżki)\n" +
                         "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
-
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -255,12 +248,7 @@ public class Main extends JFrame{
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                     }
                 }
-                GUI gui = new GUI(maze, zoomLabel);
-                panelMaze.removeAll();
-                panelMaze.setLayout(new BorderLayout());
-                panelMaze.add(gui, BorderLayout.CENTER);
-                panelMaze.revalidate();
-                panelMaze.repaint();
+                updateMaze();
             }
         });
 
@@ -276,7 +264,6 @@ public class Main extends JFrame{
                 if (gui != null) {
                     gui.setZoom(1.0, zoomLabel);
                     gui.repaint();
-
                 }
             }
         });
@@ -291,15 +278,12 @@ public class Main extends JFrame{
                     }else {
                         zoom = maze[0].length * 0.01;
                     }
-
                     gui.setZoom(zoom, zoomLabel);
                     gui.repaint();
-
                 }
             }
         });
     }
-
     public static void main(String[] args) {
         Main MainWindow = new Main();
     }

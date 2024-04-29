@@ -2,7 +2,6 @@ import java.io.DataOutputStream;
 import java.util.*;
 import java.io.FileOutputStream;
 
-
 // Algorytm A*
 public class Solver {
     private char[][] maze;

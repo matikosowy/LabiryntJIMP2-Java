@@ -163,7 +163,6 @@ public class Output {
             int liczba = 0;
             int c;
 
-
             while ((c = pathReader.read()) != -1) {
                 if (c != '\n') {
                     if (isDigit((char) c)) {
@@ -199,7 +198,6 @@ public class Output {
             e.printStackTrace();
         }
     }
-
 
     public static void outputFromText(String inputFileName, char[][] maze) {
         try (DataInputStream in = new DataInputStream(new FileInputStream(inputFileName));
@@ -338,7 +336,6 @@ public class Output {
             out.write(znak);
             out.write(count);
 
-
             out.writeInt(Integer.reverseBytes(id));
 
             // Liczenie kroków ścieżki
@@ -390,10 +387,8 @@ public class Output {
             }
             out.write(prevC);
             out.write(liczba);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
-
