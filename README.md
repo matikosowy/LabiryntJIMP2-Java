@@ -19,3 +19,9 @@
   <li>obsługa błędów</li>
 </ul>
 
+<h3>Pliki wyjściowe</h3>
+<ul>
+  <li>path.txt - ścieżka zapisana tekstowo</li>
+  <li>maze_decoded.txt - labirynt odczytany z pliku binarnego</li>
+  <li>wynik.bin - labirynt wraz ze ścieżką zapisany binarnie</li>
+</ul>
