@@ -30,8 +30,7 @@ public class Input {
     // Konwersja labiryntu z pliku binarnego do tekstoego
     public static void binaryToText(String binaryFilePath) throws IOException {
         try (DataInputStream in = new DataInputStream(new FileInputStream(binaryFilePath));
-             FileWriter out = new FileWriter("maze_decoded.txt")) {
-
+             FileWriter out = new FileWriter("filesOut/maze_decoded.txt")) {
 
             int id = Integer.reverseBytes(in.readInt());
             int escape = in.read();
@@ -107,10 +106,8 @@ public class Input {
                         count++;
                     }
                 }
-
             }
         }
-
     }
 
     // Wczytywanie labiryntu z pliku tekstowego do wektora 2d
@@ -126,6 +123,4 @@ public class Input {
         reader.close();
         return maze;
     }
-
-
 }

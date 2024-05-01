@@ -1,5 +1,4 @@
 public class Errors {
-
     // Sprawdzenie ilości początków i końców
     public static int entryexitError(char[][] maze, int rows, int columns){
         int countP = 0;
@@ -39,5 +38,4 @@ public class Errors {
         }
         return 0;
     }
-
 }

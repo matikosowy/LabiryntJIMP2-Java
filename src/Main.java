@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-
-
 public class Main extends JFrame{
     private JButton selectFileButton;
     private JButton generateMazeButton;
@@ -23,7 +21,7 @@ public class Main extends JFrame{
     private JButton zoomButton;
     private GUI gui;
 
-    private void showErrorAndResetPanel(String errorMessage) {
+    public void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
         GUI gui = new GUI(null, zoomLabel);
         panelMaze.removeAll();
@@ -42,18 +40,16 @@ public class Main extends JFrame{
         if(cellSize<1){
             cellSize = 1;
         }
-
-        System.out.println(cellSize);
+        
         int preferredWidth = cellSize * maze[0].length;
         int preferredHeight = cellSize * maze.length;
 
         gui.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        pack();
+
 
         this.revalidate();
         this.repaint();
     }
-
 
     public Main() {
         setTitle("Maze Solver");
@@ -92,19 +88,19 @@ public class Main extends JFrame{
                             showErrorAndResetPanel("Nie udało się odczytać pliku binarnego!");
                         }
                         try {
-                            columns = Input.countColumns("maze_decoded.txt");
+                            columns = Input.countColumns("filesOut/maze_decoded.txt");
                         } catch (Exception ex) {
                             JOptionPane.showMessageDialog(Main.this, "Nie udało się policzyc kolumn!", "Error", JOptionPane.ERROR_MESSAGE);
                             showErrorAndResetPanel("Nie udało się policzyc kolumn!");
                         }
                         try {
-                            rows = Input.countRows("maze_decoded.txt");
+                            rows = Input.countRows("filesOut/maze_decoded.txt");
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się policzyc wierszy!");
                         }
                         try {
                             // Zapis labiryntu do wektora 2d
-                            maze = Input.readMaze("maze_decoded.txt", rows, columns);
+                            maze = Input.readMaze("filesOut/maze_decoded.txt", rows, columns);
                         } catch (Exception ex) {
                             maze = new char[rows][columns];
                             showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem po konwersji z binarnego!");
@@ -140,6 +136,7 @@ public class Main extends JFrame{
                 }
             }
         });
+
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -156,7 +153,6 @@ public class Main extends JFrame{
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
-
                 }
             }
         });
@@ -184,12 +180,14 @@ public class Main extends JFrame{
                             for (Node node : path) {
                                 maze[node.getX()][node.getY()] = '.';
                             }
-                            GUI gui = new GUI(maze, zoomLabel);
-                            panelMaze.removeAll();
-                            panelMaze.setLayout(new BorderLayout());
-                            panelMaze.add(gui, BorderLayout.CENTER);
-                            panelMaze.revalidate();
-                            panelMaze.repaint();
+                            if(zoomLabel.getText().equals("ZOOM: 1.0")){
+                                updateMaze();
+                                gui.setZoom(1.0, zoomLabel);
+                            }else{
+                                zoomLabel.getText();
+                                updateMaze();
+                                gui.setZoom(Double.parseDouble(zoomLabel.getText().substring(6)), zoomLabel);
+                            }
                         } else {
                             JOptionPane.showMessageDialog(Main.this, "Nie znaleziono ścieżki!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -213,7 +211,6 @@ public class Main extends JFrame{
                         }
                     }
                 }
-
             }
         });
         helpButton.addActionListener(new ActionListener() {
@@ -226,8 +223,11 @@ public class Main extends JFrame{
                         "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.\n" +
                         "6. Przycisk Reset przywraca stare wejście/wyjście.\n" +
                         "7. Przycisk Oddal ustawia zoom na 1.0.\n" +
-                        "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
-
+                        "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.\n" +
+                        "9. Po naciśnięciu przycisku Rozwiąż, program generuje pliki wyjściowe:\n" +
+                        "- wynik.bin (aktualny labirynt zapisany binarnie wraz ze ścieżką)\n" +
+                        "- path.txx (tekstowy zapis ścieżki)\n" +
+                        "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -237,7 +237,7 @@ public class Main extends JFrame{
 
                 if(filePath.endsWith(".bin")) {
                     try {
-                        maze = Input.readMaze("maze_decoded.txt", maze.length, maze[0].length);
+                        maze = Input.readMaze("filesOut/maze_decoded.txt", maze.length, maze[0].length);
                     } catch (Exception ex) {
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                     }
@@ -248,12 +248,7 @@ public class Main extends JFrame{
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                     }
                 }
-                GUI gui = new GUI(maze, zoomLabel);
-                panelMaze.removeAll();
-                panelMaze.setLayout(new BorderLayout());
-                panelMaze.add(gui, BorderLayout.CENTER);
-                panelMaze.revalidate();
-                panelMaze.repaint();
+                updateMaze();
             }
         });
 
@@ -283,14 +278,12 @@ public class Main extends JFrame{
                     }else {
                         zoom = maze[0].length * 0.01;
                     }
-
                     gui.setZoom(zoom, zoomLabel);
                     gui.repaint();
                 }
             }
         });
     }
-
     public static void main(String[] args) {
         Main MainWindow = new Main();
     }

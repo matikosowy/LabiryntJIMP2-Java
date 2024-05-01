@@ -11,7 +11,11 @@ public class GUI extends JPanel {
 
     public void setZoom(double zoom, JLabel zoomLabel){
         this.zoom = zoom;
-        zoomLabel.setText("ZOOM: " + zoom);
+
+        if(zoom < 1.0) {
+            this.zoom = 1.0;
+        }
+        zoomLabel.setText("ZOOM: " + this.zoom);
     }
 
     public GUI(char[][] maze, JLabel zoomLabel) {
@@ -28,8 +32,6 @@ public class GUI extends JPanel {
                 zoom = maze[0].length * 0.01;
             }
         }
-
-
 
         zoomLabel.setText("ZOOM: " + zoom);
         // Zoomowanie labiryntu
@@ -88,7 +90,6 @@ public class GUI extends JPanel {
                             }
                         }
                     }
-
                     // Usuń stare P lub K
                     if(maze[row][col]!= 'P' && maze[row][col]!= 'K') {
                         for (int i = 0; i < maze.length; i++) {
@@ -101,7 +102,6 @@ public class GUI extends JPanel {
                             }
                         }
                     }
-
                     // Ustawianie nowego P lub K (z shiftem)
                     if (maze[row][col] != 'P' && maze[row][col] != 'K') {
                         if (e.isShiftDown()) {
@@ -114,7 +114,6 @@ public class GUI extends JPanel {
                 }
             }
         });
-
         // Przesuwanie labiryntu
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
