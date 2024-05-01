@@ -21,7 +21,7 @@ public class Main extends JFrame{
     private JButton zoomButton;
     private GUI gui;
 
-    private void showErrorAndResetPanel(String errorMessage) {
+    public void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
         GUI gui = new GUI(null, zoomLabel);
         panelMaze.removeAll();

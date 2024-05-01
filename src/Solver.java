@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 import java.io.FileOutputStream;
 
@@ -71,6 +73,8 @@ public class Solver {
         }
         Collections.reverse(path);
 
+        pathToFile();
+
         return path;
     }
 
@@ -99,17 +103,95 @@ public class Solver {
         }
         return neighbors;
     }
+
     // Zapis ścieżki do pliku
     private void pathToFile(){
-        try{
-            DataOutputStream out = new DataOutputStream(new FileOutputStream("filesOut/path.txt"));
-        }catch (Exception e){
-            System.out.println("Błąd zapisu ścieżki do pliku");
-        }
-        for (int i = 0; i < maze.length; i++) {
-            for (int j = 0; j < maze[i].length; j++) {
+        try(PrintWriter out = new PrintWriter(new FileOutputStream("filesOut/path.txt"))){
+            char direction = 't';
+            char prevDirection = 't';
 
+            // Znajdowanie komórek wejścia i wyjścia
+            int entryX = 0;
+            int entryY = 0;
+            int exitX = 0;
+            int exitY = 0;
+
+            for (int i = 0; i < maze.length; i++){
+                for (int j = 0; j < maze[0].length; j++){
+                    if (maze[i][j] == 'P'){
+                        if(i == 0){
+                            entryX = j;
+                            entryY = i+1;
+                        }
+                        else if(i == maze.length-1){
+                            entryX = j;
+                            entryY = i-1;
+                        }
+                        else if(j == 0){
+                            entryX = j+1;
+                            entryY = i;
+                        }
+                        else if(j == maze[0].length-1){
+                            entryX = j-1;
+                            entryY = i;
+                        }
+                    }
+                    if(maze[i][j] == 'K'){
+                        if(i == 0){
+                            exitX = j;
+                            exitY = i+1;
+                        }
+                        else if(i == maze.length-1){
+                            exitX = j;
+                            exitY = i-1;
+                        }
+                        else if(j == 0){
+                            exitX = j+1;
+                            exitY = i;
+                        }
+                        else if(j == maze[0].length-1){
+                            exitX = j-1;
+                            exitY = i;
+                        }
+                    }
+                }
             }
+
+            // Zapis ścieżki do pliku
+            int i = entryY;
+            int j = entryX;
+
+            int steps = 0;
+            while(i != exitY || j != exitX){
+                if(i - 2 >= 0 && maze[i-2][j] == '.' && prevDirection != 'S' && maze[i-1][j] == ' '){
+                    direction = 'N';
+                    i -= 2;
+                }else
+                if(i + 2 < maze.length && maze[i+2][j] == '.' && prevDirection != 'N' && maze[i+1][j] == ' '){
+                    direction = 'S';
+                    i += 2;
+                }else
+                if(j - 2 >= 0 && maze[i][j-2] == '.' && prevDirection != 'E' && maze[i][j-1] == ' '){
+                    direction = 'W';
+                    j -= 2;
+                }else
+                if(j + 2 < maze[0].length && maze[i][j+2] == '.' && prevDirection != 'W' && maze[i][j+1] == ' '){
+                    direction = 'E';
+                    j += 2;
+                }
+
+                if(prevDirection == direction || prevDirection == 't') {
+                    steps++;
+                }else{
+                    out.println(prevDirection + "" + steps);
+                    steps = 0;
+                }
+                prevDirection = direction;
+            }
+            out.println(prevDirection + "" + steps);
+
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, "Błąd zapisu ścieżki do pliku");
         }
     }
 }

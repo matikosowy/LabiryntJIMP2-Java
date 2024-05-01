@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LabiryntJIMP2-Java:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LabiryntJIMP2_Java_jar</output-path>
+    <root id="archive" name="LabiryntJIMP2-Java.jar">
+      <element id="module-output" name="LabiryntJIMP2-Java" />
+    </root>
+  </artifact>
+</component>
