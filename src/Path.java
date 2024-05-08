@@ -19,13 +19,13 @@ public class Path {
             content.append("START").append("\n");
             line = br.readLine();
             char kierunek = line.charAt(0);
-            String transformed = String.format("FORWARD %d", Character.getNumericValue(line.charAt(1)));
+            String transformed = String.format("FORWARD %d", Integer.parseInt(line.substring(1)));
             content.append(transformed).append("\n");
 
             while ((line = br.readLine()) != null) {
                 // Zmiana na odpowiednią formatkę
                 char direction = line.charAt(0);
-                int value = Character.getNumericValue(line.charAt(1)) + 1; // Zwiększamy o 1
+                int value = Integer.parseInt(line.substring(1)) + 1; // Zwiększamy o 1
 
                 switch (direction) {
                     case 'N':

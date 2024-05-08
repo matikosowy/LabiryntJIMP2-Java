@@ -240,7 +240,8 @@ public class Main extends JFrame{
                         "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.\n" +
                         "9. Po naciśnięciu przycisku Rozwiąż, program generuje pliki wyjściowe:\n" +
                         "- wynik.bin (aktualny labirynt zapisany binarnie wraz ze ścieżką)\n" +
-                        "- path.txx (tekstowy zapis ścieżki)\n" +
+                        "- path.txt (tekstowy zapis ścieżki)\n" +
+                        "- path_isod.txt (tekstowy zapis ścieżki zgodny z wymaganiami na ISOD)\n" +
                         "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
