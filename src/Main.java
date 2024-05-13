@@ -19,6 +19,7 @@ public class Main extends JFrame{
     private JLabel zoomLabel;
     private JButton dopasujButton;
     private JButton zoomButton;
+    private JButton imageButton;
     private GUI gui;
 
     public void showErrorAndResetPanel(String errorMessage) {
@@ -150,7 +151,6 @@ public class Main extends JFrame{
                         showErrorAndResetPanel("Plik uszkodzony! Znaleziono nieznany znak: " + znak);
                     } else {
                         updateMaze();
-                        MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -189,7 +189,6 @@ public class Main extends JFrame{
                                 updateMaze();
                                 gui.setZoom(Double.parseDouble(zoomLabel.getText().substring(6)), zoomLabel);
                             }
-                            MazeToImage.saveMazeToImage(maze, "filesOut/maze_solved.png");
                         } else {
                             JOptionPane.showMessageDialog(Main.this, "Nie znaleziono ścieżki!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -246,9 +245,9 @@ public class Main extends JFrame{
                         "- path.txt (tekstowy zapis ścieżki)\n" +
                         "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).\n" +
                         "- path_isod.txt (ścieżka w formacie wymagań na ISOD)\n" +
-                        "- maze_solved.png (rozwiązany labirynt w pliku graficznym)\n" +
-                        "10. Po naciśnięciu przycisku Generuj, program generuje pliki wyjściowe:\n" +
-                        "- maze.png (labirynt w pliku graficznym)", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
+                        "10. Po naciśnięciu przycisku Obrazek, program generuje pliki wyjściowe:\n" +
+                        "- maze.png (labirynt w pliku graficznym)\n" +
+                        "Labirynt zapisywany do pliku .png jest labiryntem obecnie wyświetlanym na ekranie.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -302,6 +301,26 @@ public class Main extends JFrame{
                     gui.setZoom(zoom, zoomLabel);
                     gui.repaint();
                 }
+            }
+        });
+        imageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int count = 0;
+                for(int i=0; i<maze.length; i++){
+                    for(int j=0; j<maze[0].length; j++){
+                        if(maze[i][j] == '.'){
+                            count++;
+                        }
+                    }
+                }
+                if(count>0){
+                    MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
+                }else{
+                    MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
+                }
+
+
             }
         });
     }
