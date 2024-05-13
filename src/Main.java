@@ -150,6 +150,7 @@ public class Main extends JFrame{
                         showErrorAndResetPanel("Plik uszkodzony! Znaleziono nieznany znak: " + znak);
                     } else {
                         updateMaze();
+                        MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
                     }
                 }else{
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -188,6 +189,7 @@ public class Main extends JFrame{
                                 updateMaze();
                                 gui.setZoom(Double.parseDouble(zoomLabel.getText().substring(6)), zoomLabel);
                             }
+                            MazeToImage.saveMazeToImage(maze, "filesOut/maze_solved.png");
                         } else {
                             JOptionPane.showMessageDialog(Main.this, "Nie znaleziono ścieżki!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -220,14 +222,19 @@ public class Main extends JFrame{
                         "2. Naciśnij przycisk Generuj w celu wygenerowania labiryntu na ekranie.\n" +
                         "3. Naciśnij przycisk Rozwiąż w celu znalezienia ścieżki.\n" +
                         "4. Naciskaj LPM lub Shift+LPM na krawędź labiryntu, aby wybrać nowe wejście/wyjście.\n" +
-                        "5. Przybliżaj scrollem i przesuwaj przeciągając myszką.\n" +
+                        "5. Przybliżaj scrollem i przesuwaj przeciągając myszką. " +
+                        "W przypadku dużych labiryntów mogą wystąpić lagi.\n" +
                         "6. Przycisk Reset przywraca stare wejście/wyjście.\n" +
                         "7. Przycisk Oddal ustawia zoom na 1.0.\n" +
                         "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.\n" +
                         "9. Po naciśnięciu przycisku Rozwiąż, program generuje pliki wyjściowe:\n" +
                         "- wynik.bin (aktualny labirynt zapisany binarnie wraz ze ścieżką)\n" +
-                        "- path.txx (tekstowy zapis ścieżki)\n" +
-                        "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
+                        "- path.txt (tekstowy zapis ścieżki)\n" +
+                        "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).\n" +
+                        "- path_isod.txt (ścieżka w formacie wymagań na ISOD)\n" +
+                        "- maze_solved.png (rozwiązany labirynt w pliku graficznym)\n" +
+                        "10. Po naciśnięciu przycisku Generuj, program generuje pliki wyjściowe:\n" +
+                        "- maze.png (labirynt w pliku graficznym)", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         resetButton.addActionListener(new ActionListener() {
