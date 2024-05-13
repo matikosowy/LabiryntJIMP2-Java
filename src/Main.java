@@ -210,6 +210,20 @@ public class Main extends JFrame{
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
                     }
+
+                    //zamiana na format ścieżki isod
+
+                    // Ścieżka do pliku wejściowego
+                    String inputFilePath = "filesOut/path.txt";
+                    // Ścieżka do pliku wyjściowego
+                    String outputFilePath = "filesOut/path_isod.txt";
+
+                    Path path = new Path(inputFilePath);
+
+                    // Odczyt i przekształcenie zawartości pliku
+                    String transformedContent = path.readAndTransform(start.getX(), start.getY());
+
+                    path.writeToFile(outputFilePath, transformedContent);
                 }
             }
         });
@@ -226,7 +240,8 @@ public class Main extends JFrame{
                         "8. Przycisk Przybliż ustawia zoom na taki, który umożliwia wygodny wybór wejścia/wyjścia.\n" +
                         "9. Po naciśnięciu przycisku Rozwiąż, program generuje pliki wyjściowe:\n" +
                         "- wynik.bin (aktualny labirynt zapisany binarnie wraz ze ścieżką)\n" +
-                        "- path.txx (tekstowy zapis ścieżki)\n" +
+                        "- path.txt (tekstowy zapis ścieżki)\n" +
+                        "- path_isod.txt (tekstowy zapis ścieżki zgodny z wymaganiami na ISOD)\n" +
                         "- maze_decoded.txt (w przypadku pliku wejściowego binarnego - odszyfrowany labirynt).", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
