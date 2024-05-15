@@ -15,6 +15,9 @@
   <li>przywrócenie labiryntu do stanu początkowego</li>
   <li>przesuwanie labiryntu</li>
   <li>przybliżanie/oddalanie labiryntu</li>
+  <li>zapis ścieżki przejścia do pliku tekstowego</li>
+  <li>zapis labiryntu wraz z rozwiązaniem do pliku binarnego</li>
+  <li>generowanie pliku graficznego .png dla labiryntu</li>
   <li>wyświetlanie instrukcji obsługi</li>
   <li>obsługa błędów</li>
 </ul>
@@ -22,6 +25,8 @@
 <h3>Pliki wyjściowe</h3>
 <ul>
   <li>path.txt - ścieżka zapisana tekstowo</li>
+  <li>path_isod.txt - ścieżka zapisana tekstowo zgodnie z innymi wymaganiami</li>
   <li>maze_decoded.txt - labirynt odczytany z pliku binarnego</li>
   <li>wynik.bin - labirynt wraz ze ścieżką zapisany binarnie</li>
+  <li>maze.png - labirynt w pliku graficznym</li>
 </ul>
