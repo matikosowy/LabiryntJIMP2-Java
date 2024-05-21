@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class Main extends JFrame{
+public class Main extends JFrame {
     private JButton selectFileButton;
     private JButton generateMazeButton;
     private char[][] maze;
@@ -22,6 +22,52 @@ public class Main extends JFrame{
     private JButton imageButton;
     private GUI gui;
 
+    private void panelSetup() {
+        // Create a toolbar and add buttons to it
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        selectFileButton = new JButton("Plik");
+        generateMazeButton = new JButton("Generuj");
+        solveButton = new JButton("Rozwiąż");
+        resetButton = new JButton("Reset");
+        dopasujButton = new JButton("Oddal");
+        zoomButton = new JButton("Przybliż");
+        imageButton = new JButton("Obrazek");
+        helpButton = new JButton("Instrukcja");
+        exitButton = new JButton("Wyjdź");
+
+        toolBar.add(selectFileButton);
+        toolBar.add(generateMazeButton);
+        toolBar.add(solveButton);
+        toolBar.add(resetButton);
+        toolBar.add(dopasujButton);
+        toolBar.add(zoomButton);
+        toolBar.add(imageButton);
+        toolBar.add(helpButton);
+        toolBar.add(exitButton);
+
+        dimensions = new JLabel("");
+        fileName = new JLabel("");
+        zoomLabel = new JLabel("");
+
+        panelMaze = new JPanel();
+
+        panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+        toolBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        dimensions.setAlignmentX(Component.LEFT_ALIGNMENT);
+        fileName.setAlignmentX(Component.LEFT_ALIGNMENT);
+        zoomLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelMaze.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panel.add(toolBar);
+        panel.add(dimensions);
+        panel.add(fileName);
+        panel.add(zoomLabel);
+        panel.add(panelMaze);
+    }
+
     public void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
         GUI gui = new GUI(null, zoomLabel);
@@ -29,6 +75,7 @@ public class Main extends JFrame{
         panelMaze.revalidate();
         panelMaze.repaint();
     }
+
     public void updateMaze() {
         gui = new GUI(maze, zoomLabel);
         panelMaze.removeAll();
@@ -38,10 +85,10 @@ public class Main extends JFrame{
         panelMaze.repaint();
 
         int cellSize = Math.min(getWidth() / maze[0].length, getHeight() / maze.length);
-        if(cellSize<1){
+        if (cellSize < 1) {
             cellSize = 1;
         }
-        
+
         int preferredWidth = cellSize * maze[0].length;
         int preferredHeight = cellSize * maze.length;
 
@@ -53,13 +100,9 @@ public class Main extends JFrame{
     }
 
     public Main() {
+        panelSetup();
         setTitle("Maze Solver");
-        setIconImage(new ImageIcon("src/icon.png").getImage());
-        try {
-            Taskbar.getTaskbar().setIconImage(new ImageIcon("src/icon.png").getImage());
-        }catch  (Exception e) {
-            System.out.println("Wykryto system: Windows");
-        }
+
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -81,7 +124,7 @@ public class Main extends JFrame{
                     int columns = 0;
 
                     // Dla pliku binarnego
-                    if(filePath.endsWith(".bin")) {
+                    if (filePath.endsWith(".bin")) {
                         try {
                             // Interpretacja tekstowa labiryntu z pliku binarnego
                             Input.binaryToText(filePath);
@@ -106,7 +149,7 @@ public class Main extends JFrame{
                             maze = new char[rows][columns];
                             showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem po konwersji z binarnego!");
                         }
-                    }else if(filePath.endsWith(".txt")) {
+                    } else if (filePath.endsWith(".txt")) {
                         try {
                             columns = Input.countColumns(filePath);
                         } catch (Exception ex) {
@@ -124,13 +167,13 @@ public class Main extends JFrame{
                             maze = new char[rows][columns];
                         }
 
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(Main.this, "Nieprawidłowy format pliku! Tylko .txt lub .bin", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    dimensions.setText("WYMIARY: " + rows/2 + " x " + columns/2);
+                    dimensions.setText("WYMIARY: " + rows / 2 + " x " + columns / 2);
                     fileName.setText("PLIK: " + selectedFile.getAbsolutePath());
 
-                    if(columns == 0 || rows == 0) {
+                    if (columns == 0 || rows == 0) {
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                         maze = null;
                     }
@@ -152,7 +195,7 @@ public class Main extends JFrame{
                     } else {
                         updateMaze();
                     }
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(Main.this, "Nie wybrano pliku!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -164,11 +207,11 @@ public class Main extends JFrame{
                 if (maze != null) {
                     Node start = null;
                     Node end = null;
-                    for (int i = 1; i < maze.length; i+=2) {
-                        for (int j = 1; j < maze[i].length; j+=2) {
-                            if (maze[i-1][j] == 'P' || maze[i+1][j] == 'P' || maze[i][j-1] == 'P' || maze[i][j+1] == 'P') {
+                    for (int i = 1; i < maze.length; i += 2) {
+                        for (int j = 1; j < maze[i].length; j += 2) {
+                            if (maze[i - 1][j] == 'P' || maze[i + 1][j] == 'P' || maze[i][j - 1] == 'P' || maze[i][j + 1] == 'P') {
                                 start = new Node(i, j);
-                            } else if (maze[i-1][j] == 'K' || maze[i+1][j] == 'K' || maze[i][j-1] == 'K' || maze[i][j+1] == 'K') {
+                            } else if (maze[i - 1][j] == 'K' || maze[i + 1][j] == 'K' || maze[i][j - 1] == 'K' || maze[i][j + 1] == 'K') {
                                 end = new Node(i, j);
                             }
                         }
@@ -181,10 +224,10 @@ public class Main extends JFrame{
                             for (Node node : path) {
                                 maze[node.getX()][node.getY()] = '.';
                             }
-                            if(zoomLabel.getText().equals("ZOOM: 1.0")){
+                            if (zoomLabel.getText().equals("ZOOM: 1.0")) {
                                 updateMaze();
                                 gui.setZoom(1.0, zoomLabel);
-                            }else{
+                            } else {
                                 zoomLabel.getText();
                                 updateMaze();
                                 gui.setZoom(Double.parseDouble(zoomLabel.getText().substring(6)), zoomLabel);
@@ -196,14 +239,14 @@ public class Main extends JFrame{
                         JOptionPane.showMessageDialog(Main.this, "Nieprawidlowa liczba początków lub końców!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     String filePath = fileName.getText().substring(6);
-                    if(filePath.endsWith(".bin")) {
+                    if (filePath.endsWith(".bin")) {
                         try {
                             // Zapis labiryntu z pliku binarnego
                             Output.outputFromBinary(filePath, maze);
                         } catch (Exception ex) {
                             showErrorAndResetPanel("Nie udało się zapisać labiryntu do pliku!");
                         }
-                    }else if(filePath.endsWith(".txt")) {
+                    } else if (filePath.endsWith(".txt")) {
                         try {
                             // Zapis labiryntu z pliku tekstowego
                             Output.outputFromText(filePath, maze);
@@ -255,13 +298,13 @@ public class Main extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String filePath = fileName.getText().substring(6);
 
-                if(filePath.endsWith(".bin")) {
+                if (filePath.endsWith(".bin")) {
                     try {
                         maze = Input.readMaze("filesOut/maze_decoded.txt", maze.length, maze[0].length);
                     } catch (Exception ex) {
                         showErrorAndResetPanel("Nie udało się odczytać pliku z labiryntem!");
                     }
-                } else if(filePath.endsWith(".txt")){
+                } else if (filePath.endsWith(".txt")) {
                     try {
                         maze = Input.readMaze(filePath, maze.length, maze[0].length);
                     } catch (Exception ex) {
@@ -293,9 +336,9 @@ public class Main extends JFrame{
                 if (gui != null) {
                     double zoom;
 
-                    if(maze.length > maze[0].length) {
+                    if (maze.length > maze[0].length) {
                         zoom = maze.length * 0.01;
-                    }else {
+                    } else {
                         zoom = maze[0].length * 0.01;
                     }
                     gui.setZoom(zoom, zoomLabel);
@@ -307,16 +350,16 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 int count = 0;
-                for(int i=0; i<maze.length; i++){
-                    for(int j=0; j<maze[0].length; j++){
-                        if(maze[i][j] == '.'){
+                for (int i = 0; i < maze.length; i++) {
+                    for (int j = 0; j < maze[0].length; j++) {
+                        if (maze[i][j] == '.') {
                             count++;
                         }
                     }
                 }
-                if(count>0){
+                if (count > 0) {
                     MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
-                }else{
+                } else {
                     MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
                 }
 
@@ -324,6 +367,7 @@ public class Main extends JFrame{
             }
         });
     }
+
     public static void main(String[] args) {
         Main MainWindow = new Main();
     }
