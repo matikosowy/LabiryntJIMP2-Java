@@ -290,7 +290,8 @@ public class Main extends JFrame {
                         "- path_isod.txt (ścieżka w formacie wymagań na ISOD)\n" +
                         "10. Po naciśnięciu przycisku Obrazek, program generuje pliki wyjściowe:\n" +
                         "- maze.png (labirynt w pliku graficznym)\n" +
-                        "Labirynt zapisywany do pliku .png jest labiryntem obecnie wyświetlanym na ekranie.", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
+                        "Labirynt zapisywany do pliku .png jest labiryntem obecnie wyświetlanym na ekranie.\n" +
+                        "UWAGA! Żeby program działał poprawnie, należy uruchomić go z katalogu root-a!", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -357,11 +358,7 @@ public class Main extends JFrame {
                         }
                     }
                 }
-                if (count > 0) {
-                    MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
-                } else {
-                    MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
-                }
+                MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
 
 
             }
