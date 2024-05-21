@@ -204,7 +204,7 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Szukanie początku i końca labiryntu
-                if (maze != null) {
+                if (maze != null && gui != null) {
                     Node start = null;
                     Node end = null;
                     for (int i = 1; i < maze.length; i += 2) {
@@ -290,7 +290,7 @@ public class Main extends JFrame {
                         "- path_isod.txt (ścieżka w formacie wymagań na ISOD)\n" +
                         "10. Po naciśnięciu przycisku Obrazek, program generuje pliki wyjściowe:\n" +
                         "- maze.png (labirynt w pliku graficznym)\n" +
-                        "Labirynt zapisywany do pliku .png jest labiryntem obecnie wyświetlanym na ekranie.\n" +
+                        "Labirynt zapisywany do pliku .png jest labiryntem obecnie wyświetlanym na ekranie.\n\n" +
                         "UWAGA! Żeby program działał poprawnie, należy uruchomić go z katalogu root-a!", "Pomoc", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -351,16 +351,16 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int count = 0;
-                for (int i = 0; i < maze.length; i++) {
-                    for (int j = 0; j < maze[0].length; j++) {
-                        if (maze[i][j] == '.') {
-                            count++;
+                if(gui != null) {
+                    for (int i = 0; i < maze.length; i++) {
+                        for (int j = 0; j < maze[0].length; j++) {
+                            if (maze[i][j] == '.') {
+                                count++;
+                            }
                         }
                     }
+                    MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
                 }
-                MazeToImage.saveMazeToImage(maze, "filesOut/maze.png");
-
-
             }
         });
     }
