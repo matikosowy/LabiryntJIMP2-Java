@@ -23,7 +23,6 @@ public class Main extends JFrame {
     private GUI gui;
 
     private void panelSetup() {
-        // Create a toolbar and add buttons to it
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         selectFileButton = new JButton("Plik");
@@ -70,6 +69,9 @@ public class Main extends JFrame {
 
     public void showErrorAndResetPanel(String errorMessage) {
         JOptionPane.showMessageDialog(Main.this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+        if(gui == null){
+            return;
+        }
         GUI gui = new GUI(null, zoomLabel);
         panelMaze.removeAll();
         panelMaze.revalidate();
